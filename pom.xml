@@ -19,12 +19,18 @@
 		<org.mapstruct.version>1.5.3.Final</org.mapstruct.version>
 		<lombok.version>1.18.24</lombok.version>
 		<javafx.version>19</javafx.version>
+		<jackson.version>2.14.1</jackson.version>
+		<jfoenix.version>8.0.10</jfoenix.version>
 	</properties>
 	
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
 		<dependency>
@@ -51,6 +57,16 @@
 		    <groupId>org.openjfx</groupId>
 		    <artifactId>javafx-fxml</artifactId>
 		    <version>${javafx.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>com.jfoenix</groupId>
+		    <artifactId>jfoenix</artifactId>
+		    <version>${jfoenix.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-databind</artifactId>
+		    <version>${jackson.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
