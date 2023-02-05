@@ -54,7 +54,7 @@ public class AjaxHubsApplication extends Application{
 	
 	private Parent getRoot(ConfigurableApplicationContext springContext) {
 		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/credentials.fxml"));
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/main-frame.fxml"));
 			loader.setControllerFactory(springContext::getBean);
 			Parent root = loader.load();
 			return root;

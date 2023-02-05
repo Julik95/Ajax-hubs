@@ -14,9 +14,4 @@ public class AppConfig {
 	public AjaxApiRestTemplate getAjaxApiRestTemplate(RestTemplateBuilder restTemplateBuilder, RestTemplateConfigProperties restTemplateConfig) {
 		return new AjaxApiRestTemplate(restTemplateBuilder, restTemplateConfig);
 	}
-	
-	@Bean
-	public MainController getMainController() {
-		return new MainController();
-	}
 }

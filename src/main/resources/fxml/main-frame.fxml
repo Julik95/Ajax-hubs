@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.scene.layout.StackPane?>
+<?import com.jfoenix.controls.JFXSpinner?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Label?>
+
+
+
+<StackPane fx:id="rootStackPane" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" styleClass="root-panel" fx:controller="ajax.systems.company.hubs.controller.MainFrameController">
+	<children>
+		<VBox visible="false" spacing="40" alignment="CENTER" fx:id="loadingPane" styleClass="loading-pane">
+			<children>
+				<JFXSpinner radius="70" />
+				<HBox alignment="CENTER" >
+					<children>
+						<Label fx:id="loadingText" styleClass="font-color-white" text="Recupero detggagli da AJAX Systems" />
+					</children>
+				</HBox>
+			</children>
+		</VBox>
+	</children>
+</StackPane>
