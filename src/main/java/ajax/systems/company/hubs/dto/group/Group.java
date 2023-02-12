@@ -22,4 +22,7 @@ public class Group {
     private Boolean bulkDisarmInvolved;
 	
 
+    public String toString() {
+    	return groupName;
+    }
 }

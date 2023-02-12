@@ -18,5 +18,6 @@ public class HubDetail {
 	private String name;
 	private HubState state;
 	private HubColor color ;
+	private Boolean groupsEnabled;
 
 }

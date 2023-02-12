@@ -19,6 +19,9 @@
 .font-18{
 	-fx-font-size: 18px;
 }
+.padding-10{
+	-fx-padding: 10;
+}
 
 .text-field-custom{
 	-fx-padding: 7;
@@ -27,15 +30,23 @@
 .title-label{
 	-fx-font-weight: bold;
 	-fx-text-fill: #FFF;
-	-fx-font-family: "Roboto Cn";
+	-fx-font-family: "Arial";
     -fx-font-smoothing-type: gray;
 }
 
 .custom-button{
-	-fx-background-color: #1565C0;
-	-fx-padding: 10;
 	-fx-text-fill: #FFF;
 	-fx-font-weight: BOLD;
+	-fx-font-size: 14px;
+}
+.back-blue{
+	-fx-background-color: #1565C0;
+}
+.back-green{
+	-fx-background-color: #43A047;
+}
+.back-red{
+	-fx-background-color: #E53935;
 }
 
 .login-top-panel{
@@ -65,4 +76,112 @@
 }
 .error-message{
 	-fx-font-size: 14px;
+}
+
+.disarmed,
+.disarmed_night_mode_off{
+	-fx-effect: dropshadow(three-pass-box, rgba(27, 94, 32, 0.8), 10, 0, 0, 0);
+}
+.armed, 
+.armed_night_mode_on,
+.armed_night_mode_off{
+	-fx-effect: dropshadow(three-pass-box, rgba(183, 28, 28, 0.8), 10, 0, 0, 0);
+}
+.night_mode,
+.disarmed_night_mode_on{
+	-fx-effect: dropshadow(three-pass-box, rgba(245, 127, 23, 0.8), 10, 0, 0, 0);
+}
+
+.partially_armed_night_mode_on,
+.partially_armed_night_mode_off{
+	-fx-effect: dropshadow(three-pass-box, rgba(13, 71, 161, 0.8), 10, 0, 0, 0);
+}
+
+.hub-name-label{
+	-fx-font-weight: ITALIC;
+	-fx-font-size: 12;
+}
+.menu-option{
+	-fx-padding: 5;
+	-fx-pref-width: 120;
+	-fx-background-color: transparent;
+	-fx-font-weight:bold;
+	-fx-cursor: hand;
+}
+.menu-option:hover{
+	-fx-background-color: #BBDEFB;
+	-fx-text-fill: #FFF;
+}
+.hubs-list-top-panel{
+	-fx-background-color: #1565C0;
+	-fx-effect: dropshadow(three-pass-box, grey, 7, 0, 0, 5);
+}
+.hubs-list-top-panel-text-field{
+	-fx-padding: 7;
+	-fx-prompt-text-fill: #FFF;
+	-jfx-focus-color: #FFF;
+	-jfx-unfocus-color: #1565C0;
+	-fx-text-fill: #FFF;
+	-fx-font-size: 14;
+	-fx-text-weight: ITALIC;
+}
+.refresh-icon{
+	-fx-effect: dropshadow(three-pass-box, rgba(250, 250, 250, 0.8), 20, 0, 0, 0);
+	-fx-cursor: hand;
+}
+.jfx-snackbar-content {
+    -fx-background-color: #323232;
+}
+.jfx-snackbar-toast {
+    -fx-text-fill: WHITE;   
+}
+.jfx-snackbar-action {
+    -fx-text-fill: #ff4081; 
+}
+
+.dialog-title{
+	-fx-font-size: 16px;
+	-fx-font-weight: bold,
+}
+
+.custom-combobox{
+	-jfx-focus-color: #2196F3;
+}
+
+.combo-box .list-view .list-cell {
+    -fx-text-fill: #000;
+    -fx-font-size: 12;
+}
+
+.combo-box-popup .list-view .list-cell:filled:selected:hover{
+    -fx-background-color: #BBDEFB;
+    -fx-text-fill: #FFF;
+}
+
+.combo-box-popup .list-view .list-cell:filled:hover{
+    -fx-background-color: #BBDEFB;
+    -fx-text-fill: #FFF;
+}
+
+.combo-box-popup .list-view .list-cell:filled:selected{
+    -fx-background-color: #2196F3;
+    -fx-text-fill: #FFF;
+}
+.combo-box>.list-cell {
+    -fx-alignment: center;
+}
+.combo-box-popup .list-view .list-cell{
+    -fx-alignment: center;
+}
+.arm-option{
+	-fx-text-fill: #E53935;
+}
+.disarm-option{
+	-fx-text-fill: #43A047;
+}
+
+.hub-list-scroll-pane{
+	-fx-focus-color: transparent;
+	-fx-faint-focus-color: transparent;
+	-fx-background-color:transparent;
 }

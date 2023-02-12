@@ -20,15 +20,20 @@ import org.springframework.util.StringUtils;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXDialogLayout;
+import com.jfoenix.controls.JFXSnackbar;
+import com.jfoenix.controls.JFXSnackbar.SnackbarEvent;
+import com.jfoenix.controls.JFXSnackbarLayout;
 
 import ajax.systems.company.hubs.dto.group.Group;
 import ajax.systems.company.hubs.dto.hub.HubCompanyBinding;
 import ajax.systems.company.hubs.dto.hub.HubDetail;
+import ajax.systems.company.hubs.dto.hub.HubStateCmd;
 import ajax.systems.company.hubs.dto.object.ObjectBriefInfo;
 import ajax.systems.company.hubs.exception.Response4xxException;
 import ajax.systems.company.hubs.exception.Response5xxException;
 import ajax.systems.company.hubs.model.CompanyHub;
 import ajax.systems.company.hubs.model.Credentials;
+import ajax.systems.company.hubs.model.DataSingleton;
 import ajax.systems.company.hubs.service.IAjaxGroupService;
 import ajax.systems.company.hubs.service.IAjaxHubService;
 import ajax.systems.company.hubs.service.IAjaxObjectService;
@@ -39,6 +44,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
@@ -71,6 +77,8 @@ public class MainFrameController extends MainController implements Initializable
 	
 	@FXML
 	private Label loadingText;
+	
+	private Credentials credentials;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -96,12 +104,24 @@ public class MainFrameController extends MainController implements Initializable
 	    ft.setAutoReverse(false);
 	    ft.setOnFinished(event -> {
 	    	loadingPane.setVisible(false);
-	    	onFinished.run();
+	    	if(onFinished != null) {
+	    		onFinished.run();
+	    	}
 	    });
 	    ft.play();
 	}
 	
-	void handleException(Exception ex, String title){
+	public void showDialog(Node heading, Node content) {
+		JFXDialogLayout dialogLayout = new JFXDialogLayout();
+		JFXDialog dialog = new JFXDialog(rootStackPane, dialogLayout, JFXDialog.DialogTransition.CENTER);
+		dialogLayout.setHeading(heading);
+		dialogLayout.setBody(content);
+		dialog.setOnMouseClicked((event) ->{
+			dialog.close();
+		});
+		dialog.show();
+	}
+	public void handleException(Exception ex, String title){
 		JFXDialogLayout alertLayout = new JFXDialogLayout();
 		Label heading = new Label(title);
 		heading.getStyleClass().add("error-heading");
@@ -151,8 +171,17 @@ public class MainFrameController extends MainController implements Initializable
 				try {
 					ResponseEntity<HubCompanyBinding[]> response = hubService.listHubsPerCompany(credentials);
 					if(response != null){
+						this.credentials = credentials;
 						updateLoadingText(String.format("Retrieving %d hubs from Ajax Systems", response.getBody().length));
 						List<CompanyHub> companyHubs = enrichHubDetails(credentials, response.getBody());
+						if(companyHubs != null) {
+							updateLoadingText(String.format("Hub'sdData have been retrieved, preparing UI", response.getBody().length));
+							Platform.runLater(() -> {
+								DataSingleton.getInstance().setData(companyHubs);
+								switchToView(ViewName.HUBS_LIST);
+							});
+						}
+						
 					}
 				}catch(Response5xxException ex) {
 					ex.printStackTrace();
@@ -228,6 +257,7 @@ public class MainFrameController extends MainController implements Initializable
 
 	@Override
 	void onCredentialsFilledUp(Credentials credentials) {
+		showLoadingPane();
 		logger.info("Credentials for Ajax API: has been setted");
 		retrieveDataFromAjax(credentials);
 	}
@@ -246,14 +276,35 @@ public class MainFrameController extends MainController implements Initializable
 		loader.setControllerFactory(springContext::getBean);
 		try {
 			Parent root = loader.load();
-			if(rootStackPane.getChildren().size() > 1) {
-				rootStackPane.getChildren().remove(0);
+			if(root != null) {
+				if(rootStackPane.getChildren().size() > 1) {
+					rootStackPane.getChildren().remove(0);
+				}
+				rootStackPane.getChildren().add(0, root);
 			}
-			rootStackPane.getChildren().add(0, root);
 		}catch(Exception ex) {
 			ex.printStackTrace();
 		}
 		
+	}
+	
+	public void showSnackBar(String message) {
+		JFXSnackbar snackbar = new JFXSnackbar(rootStackPane);
+		snackbar.setPrefWidth(450);
+		snackbar.fireEvent(new SnackbarEvent( new JFXSnackbarLayout(message),Duration.millis(2500), null));
+	}
+
+
+	@Override
+	public void controlHubState(String hubId, HubStateCmd cmd) {
+		hubService.controlHubState(credentials, cmd, hubId);
+		
+	}
+
+
+	@Override
+	public void controlGroupState(String hubId, String groupId, HubStateCmd cmd) {
+		groupService.controlHubState(credentials, cmd, hubId, groupId);
 	}
 
 }
