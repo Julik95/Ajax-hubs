@@ -22,7 +22,12 @@
 .padding-10{
 	-fx-padding: 10;
 }
-
+.padding-5{
+	-fx-padding: 5;
+}
+.cursor-hand{
+	-fx-cursor: hand;
+}
 .text-field-custom{
 	-fx-padding: 7;
 	-jfx-focus-color: #2196F3;
@@ -105,7 +110,7 @@
 
 .partially_armed_night_mode_on,
 .partially_armed_night_mode_off{
-	-fx-effect: dropshadow(three-pass-box, rgba(13, 71, 161, 0.8), 15, 0, 0, 0);
+	-fx-effect: dropshadow(three-pass-box, rgba(230, 81, 0, 0.8), 15, 0, 0, 0);
 }
 
 .hub-name-label{
@@ -205,4 +210,28 @@
 }
 .text-violet{
 	-fx-text-fill: #5E35B1;
+}
+.arm-context-option{
+	-fx-text-fill: #E53935;
+}
+.night-mode-context-option{
+	-fx-text-fill: #5E35B1;
+}
+.disarm-context-option{
+	-fx-text-fill: #43A047;
+}
+.manage-groups-context-option{
+	-fx-text-fill: #FB8C00;
+}
+.arm-context-option:hover{
+	-fx-text-fill: #EF9A9A;
+}
+.night-mode-context-option:hover{
+	-fx-text-fill: #CE93D8;
+}
+.disarm-context-option:hover{
+	-fx-text-fill: #A5D6A7;
+}
+.manage-groups-context-option:hover{
+	-fx-text-fill: #FFCC80;
 }

@@ -3,6 +3,7 @@ package ajax.systems.company.hubs.controller;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
@@ -20,6 +21,7 @@ import ajax.systems.company.hubs.model.CompanyHub;
 import ajax.systems.company.hubs.model.DataSingleton;
 import ajax.systems.company.hubs.utils.Constants;
 import ajax.systems.company.hubs.view.ViewName;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -72,7 +74,8 @@ public class HubsListController implements Initializable{
 			loader.setControllerFactory(springContext::getBean);
 			DataSingleton.getInstance().setData(companyHub);
 			Parent hubPane = loader.load();
-			hubPane.setUserData(companyHub);
+			SingleHubController controller = (SingleHubController) loader.getController();
+			hubPane.setUserData(controller);
 			hubsListRoot.getChildren().add(hubPane);
 		} catch (IOException ex) {
 			mainController.handleException(ex, String.format("Error occured during loading HUB's()%s view", companyHub.getHubId()));
@@ -82,7 +85,30 @@ public class HubsListController implements Initializable{
 	
 	private void initTopPanel(List<CompanyHub> hubs) {
 		refreshIcon.setImage(new Image(getClass().getResource(Constants.REFRESH_WHITE_ICON).toExternalForm()));
-		refreshIcon.setVisible(false);
+		refreshIcon.setOnMouseClicked(event -> {
+			Thread refreshWorker = new Thread(() -> {
+				Platform.runLater(()->{mainController.showLoadingPane();}); 
+				List<CompanyHub> companyHubs = mainController.getCompanyHubs();
+				if(companyHubs != null) {
+					hubsListRoot.getChildren().stream().forEach(child -> {
+						SingleHubController controller = (SingleHubController) child.getUserData();
+						if(controller != null) {
+							String hubId = controller.getCompanyHub().getHubId();
+							Optional<CompanyHub> hub = companyHubs.stream()
+									.filter(companyHub -> companyHub!=null && hubId.equalsIgnoreCase(companyHub.getHubId()))
+									.findFirst();
+							hub.ifPresent(companyHub -> {
+								controller.refreshCompanyHub(companyHub);
+							});
+						}
+					});
+					
+				}
+				Platform.runLater(()->{mainController.hideLoadingPane(null);}); 
+			});
+			refreshWorker.setDaemon(true);
+			refreshWorker.start();
+		});
 		ObservableList<Node> childNodesOrigin = FXCollections.observableArrayList(hubsListRoot.getChildren());
 		searchHubField.textProperty().addListener((observable, oldValue, newValue) -> {
 			if(newValue.length() > 3 ) {

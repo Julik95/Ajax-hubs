@@ -182,6 +182,26 @@ public class MainFrameController extends MainController implements Initializable
 		hideLoadingPane(()->{ dialog.show(); });
 	}
 	
+	@Override
+	public List<CompanyHub> getCompanyHubs() {
+		try {
+			ResponseEntity<HubCompanyBinding[]> response = hubService.listHubsPerCompany(credentials);
+			if(response != null){
+				List<CompanyHub> companyHubs = enrichHubDetails(credentials, response.getBody());
+				return companyHubs;
+			}
+		}catch(Response5xxException ex) {
+			ex.printStackTrace();
+			handleException(ex, "Si è verificato errore durante "+ex.getHttpStatus());
+		}catch(Response4xxException ex) {
+			ex.printStackTrace();
+			handleException(ex, "Si è verificato errore durante "+ex.getHttpStatus());
+		}catch(Exception ex) {
+			ex.printStackTrace();
+			handleException(ex, "Si è verificato errore imprevisto...");
+		}
+		return null;
+	}
 	
 	private void retrieveDataFromAjax(Credentials credentials) {
 		Thread retrieveDataExecutor = new Thread(() -> {
@@ -191,26 +211,25 @@ public class MainFrameController extends MainController implements Initializable
 					ResponseEntity<HubCompanyBinding[]> response = hubService.listHubsPerCompany(credentials);
 					if(response != null){
 						this.credentials = credentials;
-						updateLoadingText(String.format("Retrieving %d hubs from Ajax Systems", response.getBody().length));
+						updateLoadingText(String.format("Recupero hub %d info da Ajax Systems", response.getBody().length));
 						List<CompanyHub> companyHubs = enrichHubDetails(credentials, response.getBody());
 						if(companyHubs != null) {
-							updateLoadingText(String.format("Hub'sdData have been retrieved, preparing UI", response.getBody().length));
+							updateLoadingText(String.format("Dati dei Hub sono stati recuperati, preparo la UI", response.getBody().length));
 							Platform.runLater(() -> {
 								DataSingleton.getInstance().setData(companyHubs);
 								switchToView(ViewName.HUBS_LIST);
 							});
 						}
-						
 					}
 				}catch(Response5xxException ex) {
 					ex.printStackTrace();
-					handleException(ex, "Error occured during retrieving data from Ajax Systems");
+					handleException(ex, "Si è verificato errore durante "+ex.getHttpStatus());
 				}catch(Response4xxException ex) {
 					ex.printStackTrace();
-					handleException(ex, "Error occured during retrieving data from Ajax Systems");
+					handleException(ex, "Si è verificato errore durante "+ex.getHttpStatus());
 				}catch(Exception ex) {
 					ex.printStackTrace();
-					handleException(ex, "Error occured during retrieving data from Ajax Systems");
+					handleException(ex, "Si è verificato errore imprevisto...");
 				}
 			}else {
 				
@@ -224,51 +243,52 @@ public class MainFrameController extends MainController implements Initializable
 	
 	private List<CompanyHub> enrichHubDetails(Credentials credentials, HubCompanyBinding[] hubs) {
 		List<CompanyHub> result = new ArrayList<>();
-		for(HubCompanyBinding hubBinding : hubs) {
-			updateLoadingText(String.format("Start retrieving details for hub: %s", hubBinding.getHubId()));
-			CompanyHub companyHub = new CompanyHub();
-			companyHub.setHubId(hubBinding.getHubId());
-			ExecutorService hubDetailsRequestExecutor = Executors.newSingleThreadExecutor();
-			Callable<ResponseEntity<HubDetail>> callableHubDetailsRequest = () -> {
-				ResponseEntity<HubDetail> hubDetailResponse = hubService.getHubDetails(credentials, hubBinding.getHubId());
-				return hubDetailResponse;
-			};
-			ExecutorService hubObjectsRequestExecutor = Executors.newSingleThreadExecutor();
-			Callable<ResponseEntity<ObjectBriefInfo[]>> callableHubObjectsRequest = () -> {
-				ResponseEntity<ObjectBriefInfo[]> hubObjectResponse = objectService.getAvailableObjectsOfHub(credentials, hubBinding.getHubId());
-				return hubObjectResponse;
-			};
-			ExecutorService hubGroupsRequestExecutor = Executors.newSingleThreadExecutor();
-			Callable<ResponseEntity<Group[]>> callableHubGroupsRequest = () -> {
-				ResponseEntity<Group[]> groupResponse = groupService.listGroupsPerHub(credentials, hubBinding.getHubId());
-				return groupResponse;
-			};
-			Future<ResponseEntity<HubDetail>> hubDetailsResponseFuture = hubDetailsRequestExecutor.submit(callableHubDetailsRequest);
-			Future<ResponseEntity<ObjectBriefInfo[]>> hubObjectsResponseFuture = hubObjectsRequestExecutor.submit(callableHubObjectsRequest);
-			Future<ResponseEntity<Group[]>> hubGroupsResponseFuture = hubGroupsRequestExecutor.submit(callableHubGroupsRequest);
-			
-			try {
-				ResponseEntity<HubDetail> hubDetailsResponse = hubDetailsResponseFuture.get();
-				ResponseEntity<ObjectBriefInfo[]> hubObjectsResponse = hubObjectsResponseFuture.get();
-				ResponseEntity<Group[]> hubGroupsResponse = hubGroupsResponseFuture.get();
-				if(hubDetailsResponse != null) {
-					companyHub.setHubDetails(hubDetailsResponse.getBody());
-				}
-				if(hubGroupsResponse != null) {
-					companyHub.setGroups(hubGroupsResponse.getBody());
-				}
-				if(hubObjectsResponse != null) {
-					companyHub.setObjectInfoes(hubObjectsResponse.getBody());
-				}
+		if(hubs != null) {
+			for(HubCompanyBinding hubBinding : hubs) {
+				updateLoadingText(String.format("Start retrieving details for hub: %s", hubBinding.getHubId()));
+				CompanyHub companyHub = new CompanyHub();
+				companyHub.setHubId(hubBinding.getHubId());
+				ExecutorService hubDetailsRequestExecutor = Executors.newSingleThreadExecutor();
+				Callable<ResponseEntity<HubDetail>> callableHubDetailsRequest = () -> {
+					ResponseEntity<HubDetail> hubDetailResponse = hubService.getHubDetails(credentials, hubBinding.getHubId());
+					return hubDetailResponse;
+				};
+				ExecutorService hubObjectsRequestExecutor = Executors.newSingleThreadExecutor();
+				Callable<ResponseEntity<ObjectBriefInfo[]>> callableHubObjectsRequest = () -> {
+					ResponseEntity<ObjectBriefInfo[]> hubObjectResponse = objectService.getAvailableObjectsOfHub(credentials, hubBinding.getHubId());
+					return hubObjectResponse;
+				};
+				ExecutorService hubGroupsRequestExecutor = Executors.newSingleThreadExecutor();
+				Callable<ResponseEntity<Group[]>> callableHubGroupsRequest = () -> {
+					ResponseEntity<Group[]> groupResponse = groupService.listGroupsPerHub(credentials, hubBinding.getHubId());
+					return groupResponse;
+				};
+				Future<ResponseEntity<HubDetail>> hubDetailsResponseFuture = hubDetailsRequestExecutor.submit(callableHubDetailsRequest);
+				Future<ResponseEntity<ObjectBriefInfo[]>> hubObjectsResponseFuture = hubObjectsRequestExecutor.submit(callableHubObjectsRequest);
+				Future<ResponseEntity<Group[]>> hubGroupsResponseFuture = hubGroupsRequestExecutor.submit(callableHubGroupsRequest);
 				
-			}catch(Exception ex) {
-				logger.warn("Error occured during parallel service call to Ajax Systems",ex);
-				ex.printStackTrace();
+				try {
+					ResponseEntity<HubDetail> hubDetailsResponse = hubDetailsResponseFuture.get();
+					ResponseEntity<ObjectBriefInfo[]> hubObjectsResponse = hubObjectsResponseFuture.get();
+					ResponseEntity<Group[]> hubGroupsResponse = hubGroupsResponseFuture.get();
+					if(hubDetailsResponse != null) {
+						companyHub.setHubDetails(hubDetailsResponse.getBody());
+					}
+					if(hubGroupsResponse != null) {
+						companyHub.setGroups(hubGroupsResponse.getBody());
+					}
+					if(hubObjectsResponse != null) {
+						companyHub.setObjectInfoes(hubObjectsResponse.getBody());
+					}
+				}catch(Exception ex) {
+					logger.warn("Error occured during parallel service call to Ajax Systems, {}",ex);
+					ex.printStackTrace();
+				}
+				hubDetailsRequestExecutor.shutdown();
+				hubObjectsRequestExecutor.shutdown();
+				hubGroupsRequestExecutor.shutdown();
+				result.add(companyHub);
 			}
-			hubDetailsRequestExecutor.shutdown();
-			hubObjectsRequestExecutor.shutdown();
-			hubGroupsRequestExecutor.shutdown();
-			result.add(companyHub);
 		}
 		return result;
 	}
@@ -324,6 +344,17 @@ public class MainFrameController extends MainController implements Initializable
 	@Override
 	public void controlGroupState(String hubId, String groupId, HubStateCmd cmd, boolean ignoreProblems) {
 		groupService.controlHubState(credentials, cmd, hubId, groupId, ignoreProblems);
+		
+	}
+
+
+	@Override
+	public HubDetail getHubsDetails(String hubId) {
+		ResponseEntity<HubDetail> response =  hubService.getHubDetails(credentials, hubId);
+		if(response != null) {
+			return response.getBody();
+		}
+		return null;
 	}
 
 }

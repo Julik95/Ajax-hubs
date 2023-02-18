@@ -7,7 +7,6 @@ import java.util.ResourceBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -21,6 +20,7 @@ import com.jfoenix.controls.JFXPopup.PopupVPosition;
 
 import ajax.systems.company.hubs.dto.group.Group;
 import ajax.systems.company.hubs.dto.hub.HubColor;
+import ajax.systems.company.hubs.dto.hub.HubDetail;
 import ajax.systems.company.hubs.dto.hub.HubState;
 import ajax.systems.company.hubs.dto.hub.HubStateCmd;
 import ajax.systems.company.hubs.dto.hub.HubSubType;
@@ -68,15 +68,18 @@ public class SingleHubController implements Initializable{
 	private final Integer MAX_HUB_NAME_LEN = 32;
 	private final String GROUP_DIALOG_HEADING_LABEL = "Selezionare l'area sulla quale effettuare l'operazione";
 	private final String ALARM_ARMED_MESSAGE = "Impianto %s è stato inserito";
+	private final String ALARM_DISARMED_GROUP_MESSAGE = "L'area %s è stata disinserita";
+	private final String ALARM_ARMED_GROUP_MESSAGE = "L'area %s è stata inserita";
 	private final String ALARM_NIGHT_MODE_ARMED_MESSAGE = "Impianto %s è stato inserito su modalità noturna";
-	private final String ALARM_DISARMED_MESSAGE = "Impianto %s è stato diainserito";
-	private final String HUB_TOOLTIP_TEXT = "Nome Hub: %s\nObject ID: %s";
+	private final String ALARM_DISARMED_MESSAGE = "Impianto %s è stato disinserito";
+	private final String HUB_TOOLTIP_TEXT = "Nome Hub: %s\nHub ID: %s";
 	private final String ARM_ERRORS_HEADING = "Ci sono un paio di problemi";
 	private final String ARM_GENERIC_ERROR_HEADING = "Errore imprevisto";
 	private final String ARM_ERROR_MESSAHE = "%s presenta qualche problema. Vorresti ricontrollare o procedere lo stesso con l'inserimento?";
 	private final String ARM_ERRORS_MESSAHE = "%s presenta un paio di problemi. Vorresti ricontrollare o procedere lo stesso con l'inserimento?";
 	private final String CONTROL_TEXT = "Controllo";
 	private final String IGNOR_TEXT = "Ignora ed inserisci";
+	private final String ERROR_DIALOG_TITLE = "Si è verificato errore";
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -87,10 +90,7 @@ public class SingleHubController implements Initializable{
 			}
 			if(companyHub.getObjectInfoes() != null && companyHub.getObjectInfoes().length == 1) {
 				hubName.setText(adjustHubName(companyHub.getObjectInfoes()[0].getName()));
-				String tooltipTxt = String.format(HUB_TOOLTIP_TEXT,companyHub.getObjectInfoes()[0].getName(), companyHub.getObjectInfoes()[0].getId());
-				Tooltip tooltip = new Tooltip(tooltipTxt);
-				tooltip.setStyle("-fx-font-size: 12");
-				Tooltip.install(hubImage, tooltip);
+				setTooltip();
 			}
 			
 		}
@@ -107,7 +107,6 @@ public class SingleHubController implements Initializable{
 	protected Group[] getHubGroups() {
 		return this.companyHub.getGroups();
 	}
-	
 	protected void showGroupsDialog() {
 		Node content = initGroupsDialogContent();
 		if(content != null) {
@@ -115,14 +114,18 @@ public class SingleHubController implements Initializable{
 		}
 		
 	}
-	
 	protected void hideDialog() {
 		if(dialog != null) {
 			dialog.close();
 			dialog = null;
 		}
 	}
-	
+	private void setTooltip() {
+		String tooltipTxt = String.format(HUB_TOOLTIP_TEXT,companyHub.getObjectInfoes()[0].getName(), companyHub.getHubId());
+		Tooltip tooltip = new Tooltip(tooltipTxt);
+		tooltip.setStyle("-fx-font-size: 12");
+		Tooltip.install(hubImage, tooltip);
+	}
 	private Node initGroupsDialogHeading() {
 		Label label = new Label(GROUP_DIALOG_HEADING_LABEL);
 		label.getStyleClass().add("dialog-title");
@@ -176,11 +179,10 @@ public class SingleHubController implements Initializable{
 	}
 	
 	private void onHubStateChange() {
-		if(companyHub.getHubDetails().getState() != null) {
-			hubImage.getStyleClass().clear();
-			String sateCss = companyHub.getHubDetails().getState().getHubState().toLowerCase();
-			hubImage.getStyleClass().add(sateCss);
-		}
+		hubImage.getStyleClass().clear();
+		String sateCss = companyHub.getHubDetails().getState().getHubState().toLowerCase();
+		hubImage.getStyleClass().add(sateCss);
+
 	}
 	
 	private void initPopup() {
@@ -211,47 +213,85 @@ public class SingleHubController implements Initializable{
 	protected void hideOptions() {
 		options.hide();
 	}
-	protected void diasArmHub() {
+	protected void disarmHub() {
 		try {
 			mainController.controlHubState(companyHub.getHubId(), HubStateCmd.DISARM, true);
+			companyHub.getHubDetails().setState(HubState.DISARMED);
 			Platform.runLater(() -> {
-				companyHub.getHubDetails().setState(HubState.DISARMED);
 				options = null;
 				mainController.showSnackBar(String.format(ALARM_DISARMED_MESSAGE, companyHub.getObjectInfoes()[0].getName()));
 				onHubStateChange();
 			});
 			logger.info("Diasarming the HUB {}", companyHub.getHubId());
 		}catch(Exception ex) {
-			logger.error("Error occured during disarming hub {}", companyHub.getHubId());
-			mainController.handleException(ex, String.format("Error occured during disarming hub ", companyHub.getHubId()));
+			logger.error("Error occured during disarming hub {}, {}", companyHub.getHubId(), ex.getMessage());
+			mainController.handleException(ex, ERROR_DIALOG_TITLE);
+		}
+	}
+	protected void disarmHubGroup(String groupId) {
+		try {
+			mainController.controlGroupState(companyHub.getHubId(), groupId, HubStateCmd.DISARM, true);
+			Thread.sleep(500);
+			String groupName = getGroupNameById(groupId);
+			updateHubDetails(() -> {
+				options = null;
+				mainController.showSnackBar(String.format(ALARM_DISARMED_GROUP_MESSAGE, groupName));
+				onHubStateChange();
+			});
+			logger.info("Disarming hub's {} group {}", companyHub.getHubId(), groupName);
+		}catch(Exception ex) {
+			logger.error("Error occured during disarming hub's {} group {}, {}", companyHub.getHubId(),groupId, ex.getMessage());
+			mainController.handleException(ex, ERROR_DIALOG_TITLE);
 		}
 	}
 	protected void armHub(boolean ignoreProblems) {
 		try {
 			mainController.controlHubState(companyHub.getHubId(), HubStateCmd.ARM, ignoreProblems);
+			companyHub.getHubDetails().setState(HubState.ARMED);
 			Platform.runLater(() -> {
-				companyHub.getHubDetails().setState(HubState.ARMED);
 				options = null;
 				mainController.showSnackBar(String.format(ALARM_ARMED_MESSAGE, companyHub.getObjectInfoes()[0].getName()));
 				onHubStateChange();
 			});
 			logger.info("Arming the HUB {}", companyHub.getHubId());
 		}catch(Response412ArmException ex412) {
-			logger.warn("Errors occured during arming {}", ex412.getMessage());
+			logger.warn("There are some problems with arming hub {}, {}", companyHub.getHubId(), ex412.getMessage());
 			Platform.runLater(() -> {
 				handleArmingException(ex412, "Impianto "+companyHub.getObjectInfoes()[0].getName(), ()->{armHub(true);}, false);
 			});
 		}catch(Exception ex) {
-			logger.error("Error occured during arming hub {}", companyHub.getHubId());
-			mainController.handleException(ex, String.format("Error occured during arming hub %s", companyHub.getHubId() ));
+			logger.error("Error occured during arming hub {}, {}", companyHub.getHubId(), ex.getMessage());
+			mainController.handleException(ex, ERROR_DIALOG_TITLE);
+		}
+	}
+	
+	protected void armHubGroup(String groupId, boolean ignoreProblems) {
+		try {
+			mainController.controlGroupState(companyHub.getHubId(), groupId, HubStateCmd.ARM, ignoreProblems);
+			companyHub.getHubDetails().setState(HubState.PARTIALLY_ARMED_NIGHT_MODE_OFF);
+			String groupName = getGroupNameById(groupId);
+			Platform.runLater(() -> {
+				options = null;
+				mainController.showSnackBar(String.format(ALARM_ARMED_GROUP_MESSAGE, groupName));
+				onHubStateChange();
+			});
+			logger.info("Arming hub's {} group {}", companyHub.getHubId(), groupName);
+		}catch(Response412ArmException ex412) {
+			logger.warn("There are some problems with arming hub's {} group {}, {}", companyHub.getHubId(),groupId, ex412.getMessage());
+			Platform.runLater(() -> {
+				handleArmingException(ex412, "L'area "+getGroupNameById(groupId), ()->{armHubGroup(groupId, true);}, false);
+			});
+		}catch(Exception ex) {
+			logger.error("Error occured during arming hub's {} group {}, {}", companyHub.getHubId(),groupId, ex.getMessage());
+			mainController.handleException(ex, ERROR_DIALOG_TITLE);
 		}
 	}
 	
 	protected void armNightMode(boolean ignoreProblems) {
 		try {
 			mainController.controlHubState(companyHub.getHubId(), HubStateCmd.NIGHT_MODE_ON, ignoreProblems);
+			companyHub.getHubDetails().setState(HubState.NIGHT_MODE);
 			Platform.runLater(() -> {
-				companyHub.getHubDetails().setState(HubState.NIGHT_MODE);
 				options = null;
 				mainController.showSnackBar(String.format(ALARM_NIGHT_MODE_ARMED_MESSAGE, companyHub.getObjectInfoes()[0].getName()));
 				onHubStateChange();
@@ -263,13 +303,27 @@ public class SingleHubController implements Initializable{
 				handleArmingException(ex412, "Impianto "+companyHub.getObjectInfoes()[0].getName(), ()->{armNightMode(true);}, true);
 			});
 		}catch(Exception ex) {
-			logger.error("Error occured during arming hight mode hub {}", companyHub.getHubId());
-			mainController.handleException(ex, String.format("Error occured during arming night mode hub %s", companyHub.getHubId() ));
+			logger.error("Error occured during arming hight mode hub {}, {}", companyHub.getHubId(), ex.getMessage());
+			mainController.handleException(ex, ERROR_DIALOG_TITLE);
 		}
 	}
 	
-	protected void controlGroupState(String groupId, HubStateCmd cmd, boolean ignoreProblems) {
-		mainController.controlGroupState(companyHub.getHubId(), groupId, cmd, ignoreProblems);
+	private void updateHubDetails(Runnable callBack) {
+		HubDetail details = mainController.getHubsDetails(companyHub.getHubId());
+		if(details != null) {
+			companyHub.setHubDetails(details);
+			Platform.runLater(callBack);
+		}
+	}
+	
+	private String getGroupNameById(String groupId) {
+		String groupName = "";
+		for(Group group : companyHub.getGroups()){
+			if(group.getId().equals(groupId)) {
+				groupName = group.getGroupName();
+			}
+		}
+		return groupName;
 	}
 
 	private void handleArmingException(Response412ArmException ex412,String name, Runnable ingoreAction, boolean isNightMode) {
@@ -308,4 +362,13 @@ public class SingleHubController implements Initializable{
 		dialog.show();
 	}
 	
+	public void refreshCompanyHub(CompanyHub updated) {
+		logger.info("Refreshing hub's view: {}", updated.getHubId());
+		if(updated != null) {
+			companyHub = updated;
+			hubName.setText(adjustHubName(companyHub.getObjectInfoes()[0].getName()));
+			onHubStateChange();
+			setTooltip();
+		}
+	}
 }

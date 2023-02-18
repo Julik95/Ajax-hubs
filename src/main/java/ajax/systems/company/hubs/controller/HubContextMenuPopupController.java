@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import ajax.systems.company.hubs.dto.hub.HubState;
 import ajax.systems.company.hubs.utils.Constants;
+import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -29,42 +30,47 @@ public class HubContextMenuPopupController implements Initializable{
 	private Label disarmOption;
 	
 	@FXML
-	private Label manageAreaOption;
+	private Label manageGroupsOption;
 	
 	private SingleHubController singleHubController;
 	
 	@FXML
 	private Pane containerPane;
-	
-	@Autowired
-	private MainController mainController;
 
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		armOption.setGraphic(new ImageView(new Image(getClass().getResource(Constants.ARM_RED_ICON).toExternalForm())));
+		ImageView armRedIcon = new ImageView(new Image(getClass().getResource(Constants.ARM_RED_ICON).toExternalForm()));
+		ImageView armLightRedIcon = new ImageView(new Image(getClass().getResource(Constants.ARM_LIGHT_RED_ICON).toExternalForm()));
+		armOption.graphicProperty().bind(Bindings.when(armOption.hoverProperty()).then(armLightRedIcon).otherwise(armRedIcon));
 		armOption.setOnMouseClicked(event -> {
 			singleHubController.hideOptions();
 			new Thread(() -> {
 				singleHubController.armHub(false);
 			}).start();
 		});
-		armNightModeOption.setGraphic(new ImageView(new Image(getClass().getResource(Constants.ARM_NIGHT_VIOLET_ICON).toExternalForm())));
+		ImageView armNightVioletIcon = new ImageView(new Image(getClass().getResource(Constants.ARM_NIGHT_VIOLET_ICON).toExternalForm()));
+		ImageView armNightLightVioletIcon = new ImageView(new Image(getClass().getResource(Constants.ARM_NIGHT_LIGHT_VIOLET_ICON).toExternalForm()));
+		armNightModeOption.graphicProperty().bind(Bindings.when(armNightModeOption.hoverProperty()).then(armNightLightVioletIcon).otherwise(armNightVioletIcon));
 		armNightModeOption.setOnMouseClicked(event -> {
 			singleHubController.hideOptions();
 			new Thread(() -> {
 				singleHubController.armNightMode(false);
 			}).start();
 		});
-		disarmOption.setGraphic(new ImageView(new Image(getClass().getResource(Constants.DISARM_GREEN_ICON).toExternalForm())));
+		ImageView disarmGreenIcon = new ImageView(new Image(getClass().getResource(Constants.DISARM_GREEN_ICON).toExternalForm()));
+		ImageView disarmLightGreenIcon = new ImageView(new Image(getClass().getResource(Constants.DISARM_LIGHT_GREEN_ICON).toExternalForm()));
+		disarmOption.graphicProperty().bind(Bindings.when(disarmOption.hoverProperty()).then(disarmLightGreenIcon).otherwise(disarmGreenIcon));
 		disarmOption.setOnMouseClicked(event -> {
 			singleHubController.hideOptions();
 			new Thread(() -> {
-				singleHubController.diasArmHub();
+				singleHubController.disarmHub();
 			}).start();
 		});
-		manageAreaOption.setGraphic(new ImageView(new Image(getClass().getResource(Constants.GROUPS_ORANGE_ICON).toExternalForm())));
-		manageAreaOption.setOnMouseClicked(event -> {
+		ImageView manageGroupsOrangeIcon = new ImageView(new Image(getClass().getResource(Constants.GROUPS_ORANGE_ICON).toExternalForm()));
+		ImageView manageGroupsLightOrangeIcon = new ImageView(new Image(getClass().getResource(Constants.GROUPS_LIGHT_ORANGE_ICON).toExternalForm()));
+		manageGroupsOption.graphicProperty().bind(Bindings.when(manageGroupsOption.hoverProperty()).then(manageGroupsLightOrangeIcon).otherwise(manageGroupsOrangeIcon));
+		manageGroupsOption.setOnMouseClicked(event -> {
 			singleHubController.hideOptions();
 			singleHubController.showGroupsDialog();
 		});
@@ -75,7 +81,7 @@ public class HubContextMenuPopupController implements Initializable{
 		if(singleHubController.getCompanyHub() != null) {
 			if(singleHubController.getCompanyHub().getGroups() == null || singleHubController.getCompanyHub().getGroups().length == 0 || 
 					singleHubController.getCompanyHub().getHubDetails() == null || !singleHubController.getCompanyHub().getHubDetails().getGroupsEnabled()) {
-				containerPane.getChildren().remove(manageAreaOption);
+				containerPane.getChildren().remove(manageGroupsOption);
 			}
 			if(singleHubController.getCompanyHub().getHubDetails() != null) {
 				HubState state = singleHubController.getCompanyHub().getHubDetails().getState();

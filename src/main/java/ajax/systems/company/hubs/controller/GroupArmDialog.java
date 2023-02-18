@@ -52,7 +52,7 @@ public class GroupArmDialog implements Initializable{
 			Group selectedGroup = gropsCombobox.getSelectionModel().getSelectedItem();
 			if(selectedGroup != null) {
 				new Thread(() -> {
-					singleHubController.controlGroupState(selectedGroup.getId(), HubStateCmd.DISARM, true);
+					singleHubController.disarmHubGroup(selectedGroup.getId());
 				}).start();
 			}
 		});
@@ -61,7 +61,7 @@ public class GroupArmDialog implements Initializable{
 			Group selectedGroup = gropsCombobox.getSelectionModel().getSelectedItem();
 			if(selectedGroup != null) {
 				new Thread(() -> {
-					singleHubController.controlGroupState(selectedGroup.getId(), HubStateCmd.ARM, false);
+					singleHubController.armHubGroup(selectedGroup.getId(), false);
 				}).start();
 			}
 		});
