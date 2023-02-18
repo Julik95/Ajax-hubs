@@ -45,10 +45,21 @@
 .back-green{
 	-fx-background-color: #43A047;
 }
+.text-green{
+	-fx-text-fill: #43A047;
+}
 .back-red{
 	-fx-background-color: #E53935;
 }
-
+.text-red{
+	-fx-text-fill: #E53935;
+}
+.back-violet{
+	-fx-background-color: #5E35B1;
+}
+.text-blue{
+	-fx-text-fill: #1E88E5;
+}
 .login-top-panel{
 	-fx-background-color: #2196F3;
 	-fx-effect: dropshadow(three-pass-box, grey, 10, 0, 0, 5);
@@ -75,26 +86,26 @@
 	-fx-text-fill: #D32F2F;
 }
 .error-message{
-	-fx-font-size: 14px;
+	-fx-font-size: 12px;
 }
 
 .disarmed,
 .disarmed_night_mode_off{
-	-fx-effect: dropshadow(three-pass-box, rgba(27, 94, 32, 0.8), 10, 0, 0, 0);
+	-fx-effect: dropshadow(three-pass-box, rgba(27, 94, 32, 0.8), 15, 0, 0, 0);
 }
 .armed, 
 .armed_night_mode_on,
 .armed_night_mode_off{
-	-fx-effect: dropshadow(three-pass-box, rgba(183, 28, 28, 0.8), 10, 0, 0, 0);
+	-fx-effect: dropshadow(three-pass-box, rgba(183, 28, 28, 0.8), 15, 0, 0, 0);
 }
 .night_mode,
 .disarmed_night_mode_on{
-	-fx-effect: dropshadow(three-pass-box, rgba(245, 127, 23, 0.8), 10, 0, 0, 0);
+	-fx-effect: dropshadow(three-pass-box, rgba(74, 20, 140, 0.8), 15, 0, 0, 0);
 }
 
 .partially_armed_night_mode_on,
 .partially_armed_night_mode_off{
-	-fx-effect: dropshadow(three-pass-box, rgba(13, 71, 161, 0.8), 10, 0, 0, 0);
+	-fx-effect: dropshadow(three-pass-box, rgba(13, 71, 161, 0.8), 15, 0, 0, 0);
 }
 
 .hub-name-label{
@@ -162,6 +173,9 @@
     -fx-background-color: #BBDEFB;
     -fx-text-fill: #FFF;
 }
+.jfx-combo-box > .prompt-container {
+    -fx-alignment: center;
+}
 
 .combo-box-popup .list-view .list-cell:filled:selected{
     -fx-background-color: #2196F3;
@@ -184,4 +198,11 @@
 	-fx-focus-color: transparent;
 	-fx-faint-focus-color: transparent;
 	-fx-background-color:transparent;
+}
+.arm-error-heading{
+	-fx-font-size: 18;
+	-fx-font-weight: BOLD;
+}
+.text-violet{
+	-fx-text-fill: #5E35B1;
 }

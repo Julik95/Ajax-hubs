@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import com.jfoenix.controls.JFXComboBox?>
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.geometry.Insets?>
+
+<VBox fx:controller="ajax.systems.company.hubs.controller.GroupArmDialog" alignment="CENTER" spacing="20" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
+	<padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+   	</padding>
+	<children>
+		<JFXComboBox minWidth="250" promptText="Selezionare Area" styleClass="custom-combobox" fx:id="gropsCombobox" />
+		<HBox fx:id="optionsContainer" visible="false" spacing="15" alignment="CENTER" >
+			<padding>
+      			<Insets bottom="0" left="20.0" right="20.0" top="20.0" />
+   			</padding>
+			<children>
+				<JFXButton styleClass="custom-button, text-green" fx:id="disarmGroupButton" text="Disinserisci" />
+				<JFXButton styleClass="custom-button, text-red" fx:id="armGroupButton" text="Inserisci" />
+			</children>
+		</HBox>
+	</children>
+</VBox>

@@ -1,11 +1,11 @@
 package ajax.systems.company.hubs.config;
 
-import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.stream.Collectors;
+import java.io.InputStream;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.client.ClientHttpResponse;
@@ -14,7 +14,9 @@ import org.springframework.web.client.ResponseErrorHandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import ajax.systems.company.hubs.dto.error.ArmingError;
 import ajax.systems.company.hubs.dto.error.ErrorMessage;
+import ajax.systems.company.hubs.exception.Response412ArmException;
 import ajax.systems.company.hubs.exception.Response4xxException;
 import ajax.systems.company.hubs.exception.Response5xxException;
 
@@ -30,12 +32,17 @@ public class RestTemplateErrorHandler implements ResponseErrorHandler{
 	@Override
 	public void handleError(ClientHttpResponse httpResponse) throws IOException {
 		logger.error("Error occured {} during request to the Ajax API", httpResponse.getStatusCode().toString());
-		ObjectMapper mapper = new ObjectMapper();
 		if(httpResponse.getStatusCode().is4xxClientError()) {
-			try {
-				ErrorMessage errorMessage = mapper.readValue(httpResponse.getBody(), ErrorMessage.class);
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			IOUtils.copy(httpResponse.getBody(), baos);
+			ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray()); 
+			ErrorMessage errorMessage = parseError(bais, ErrorMessage.class);
+			ArmingError armingError = parseError(bais, ArmingError.class);	
+			if(errorMessage != null) {
 				throw new Response4xxException(httpResponse.getStatusText(), httpResponse.getStatusCode(), errorMessage);
-			}catch(Exception ex) {
+			}else if(armingError != null) {
+				throw new Response412ArmException(armingError.getMessage(), armingError);
+			}else {
 				if(StringUtils.hasText(httpResponse.getStatusText()))
 					throw new Response4xxException(httpResponse.getStatusText(), httpResponse.getStatusCode());
 				else {
@@ -43,6 +50,7 @@ public class RestTemplateErrorHandler implements ResponseErrorHandler{
 				}
 			}
     	}else if(httpResponse.getStatusCode().is5xxServerError()) {
+    		ObjectMapper mapper = new ObjectMapper();
     		try {
 				ErrorMessage errorMessage = mapper.readValue(httpResponse.getBody(), ErrorMessage.class);
 				throw new Response5xxException(httpResponse.getStatusText(), httpResponse.getStatusCode(), errorMessage);
@@ -55,6 +63,17 @@ public class RestTemplateErrorHandler implements ResponseErrorHandler{
 			}
     	}
 		
+	}
+	
+	private <T> T parseError(ByteArrayInputStream body, Class<T> typeRef) {
+		body.reset();
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			T object = mapper.readValue(body, typeRef);
+			return object;
+		}catch(Exception ex) {
+			return null;
+		}
 	}
 
 }

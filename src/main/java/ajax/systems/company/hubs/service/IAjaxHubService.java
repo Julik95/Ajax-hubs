@@ -11,6 +11,6 @@ public interface IAjaxHubService {
 	
 	ResponseEntity<HubCompanyBinding[]> listHubsPerCompany(Credentials credentials);
 	ResponseEntity<HubDetail> getHubDetails(Credentials credentials, String hubId);
-	ResponseEntity<Void> controlHubState(Credentials credentials, HubStateCmd cmd, String hubId);
+	ResponseEntity<Void> controlHubState(Credentials credentials, HubStateCmd cmd, String hubId, boolean ignoreProblems);
 
 }

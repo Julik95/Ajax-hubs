@@ -8,14 +8,15 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 @JsonFormat(shape = JsonFormat.Shape.STRING)
-public enum HubStateCmd {
+public enum HubSubType {
 
-	ARM("ARM"),
-	DISARM("DISARM"),
-	NIGHT_MODE_ON("NIGHT_MODE_ON"),
-	NIGHT_MODE_OFF("NIGHT_MODE_OFF");
+	HUB_HYBRID_4G("HUB_HYBRID_4G"),
+	HUB_HYBRID("HUB_HYBRID"),
+	HUB_2_PLUS("HUB_2_PLUS"),
+	HUB_2_4G("HUB_2_4G"),
+	HUB_2("HUB_2"),
+	HUB_PLUS("HUB_PLUS"),
+	HUB("HUB");
 	
-	String comand;
-	
-	
+	private String type;
 }

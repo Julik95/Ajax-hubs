@@ -64,10 +64,10 @@ public class AjaxHubService extends AjaxAbstractService implements IAjaxHubServi
 	}
 
 	@Override
-	public ResponseEntity<Void> controlHubState(Credentials credentials, HubStateCmd cmd, String hubId) {
+	public ResponseEntity<Void> controlHubState(Credentials credentials, HubStateCmd cmd, String hubId, boolean ignoereProblems) {
 		if(StringUtils.hasText(hubId) && StringUtils.hasText(credentials.getCompanyId())) {
 			logger.info("PUT request to change hub's {} state to: {}", hubId, cmd.getComand());
-			ControlStateRequest request = new ControlStateRequest(true, cmd);
+			ControlStateRequest request = new ControlStateRequest(ignoereProblems, cmd);
 			HttpEntity<ControlStateRequest> requestEntity = new HttpEntity<>(request, getDefaultHeaders(credentials));
 			Map<String, String> params = new HashMap<>();
 			params.put("companyId", credentials.getCompanyId());

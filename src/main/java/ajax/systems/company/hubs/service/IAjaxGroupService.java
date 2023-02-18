@@ -9,6 +9,6 @@ import ajax.systems.company.hubs.model.Credentials;
 public interface IAjaxGroupService {
 	
 	ResponseEntity<Group[]> listGroupsPerHub(Credentials credentials, String hubId);
-	ResponseEntity<Void> controlHubState(Credentials credentials, HubStateCmd cmd, String hubId, String groupId);
+	ResponseEntity<Void> controlHubState(Credentials credentials, HubStateCmd cmd, String hubId, String groupId, boolean ignoreProblems);
 
 }

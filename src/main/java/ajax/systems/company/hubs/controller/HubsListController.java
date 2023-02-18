@@ -37,6 +37,9 @@ public class HubsListController implements Initializable{
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	
 	@Autowired
+	private ConfigurableApplicationContext springContext;
+	
+	@Autowired
 	private MainController mainController;
 	
 	@FXML
@@ -66,13 +69,10 @@ public class HubsListController implements Initializable{
 		logger.info("Inizializzo hub's UI: {}", companyHub.getHubId());
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(ViewName.SINGLE_HUB.getName()));
+			loader.setControllerFactory(springContext::getBean);
 			DataSingleton.getInstance().setData(companyHub);
 			Parent hubPane = loader.load();
 			hubPane.setUserData(companyHub);
-			SingleHubController contoller = (SingleHubController) loader.getController();
-			if(contoller != null) {
-				contoller.setMainController(mainController);
-			}
 			hubsListRoot.getChildren().add(hubPane);
 		} catch (IOException ex) {
 			mainController.handleException(ex, String.format("Error occured during loading HUB's()%s view", companyHub.getHubId()));
@@ -82,9 +82,7 @@ public class HubsListController implements Initializable{
 	
 	private void initTopPanel(List<CompanyHub> hubs) {
 		refreshIcon.setImage(new Image(getClass().getResource(Constants.REFRESH_WHITE_ICON).toExternalForm()));
-		refreshIcon.setOnMouseClicked(event ->{
-			
-		});
+		refreshIcon.setVisible(false);
 		ObservableList<Node> childNodesOrigin = FXCollections.observableArrayList(hubsListRoot.getChildren());
 		searchHubField.textProperty().addListener((observable, oldValue, newValue) -> {
 			if(newValue.length() > 3 ) {

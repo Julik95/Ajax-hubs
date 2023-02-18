@@ -79,6 +79,9 @@ public class MainFrameController extends MainController implements Initializable
 	private Label loadingText;
 	
 	private Credentials credentials;
+	
+	
+	private final String CLOSE_LABEL = "Chiudi";
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -111,7 +114,7 @@ public class MainFrameController extends MainController implements Initializable
 	    ft.play();
 	}
 	
-	public void showDialog(Node heading, Node content) {
+	public JFXDialog showDialog(Node heading, Node content) {
 		JFXDialogLayout dialogLayout = new JFXDialogLayout();
 		JFXDialog dialog = new JFXDialog(rootStackPane, dialogLayout, JFXDialog.DialogTransition.CENTER);
 		dialogLayout.setHeading(heading);
@@ -120,6 +123,22 @@ public class MainFrameController extends MainController implements Initializable
 			dialog.close();
 		});
 		dialog.show();
+		return dialog;
+	}
+	public JFXDialog handleArmException(String headingMessage, String bodyMessage, JFXButton ...actions) {
+		JFXDialogLayout armErrorLayout = new JFXDialogLayout();
+		Label heading = new Label(headingMessage);
+		Label message = new Label(bodyMessage);
+		
+		heading.getStyleClass().add("arm-error-heading");
+		message.getStyleClass().add("error-message");
+		message.setWrapText(true);
+		message.maxWidth(800);
+		armErrorLayout.setHeading(heading);
+		armErrorLayout.setBody(new StackPane(new Label(bodyMessage)));
+		armErrorLayout.setActions(actions);
+		JFXDialog dialog = new JFXDialog(rootStackPane, armErrorLayout, JFXDialog.DialogTransition.CENTER);
+		return dialog;
 	}
 	public void handleException(Exception ex, String title){
 		JFXDialogLayout alertLayout = new JFXDialogLayout();
@@ -154,7 +173,7 @@ public class MainFrameController extends MainController implements Initializable
 		}
 		alertLayout.setHeading(heading);
 		alertLayout.setBody(new StackPane(messageTxt));
-		JFXButton action = new JFXButton("Chiudi");
+		JFXButton action = new JFXButton(CLOSE_LABEL);
 		alertLayout.setActions(action);
 		JFXDialog dialog = new JFXDialog(rootStackPane, alertLayout, JFXDialog.DialogTransition.CENTER);
 		action.setOnMouseClicked((event) ->{
@@ -296,15 +315,15 @@ public class MainFrameController extends MainController implements Initializable
 
 
 	@Override
-	public void controlHubState(String hubId, HubStateCmd cmd) {
-		hubService.controlHubState(credentials, cmd, hubId);
+	public void controlHubState(String hubId, HubStateCmd cmd, boolean ignoreProblems) {
+		hubService.controlHubState(credentials, cmd, hubId, ignoreProblems);
 		
 	}
 
 
 	@Override
-	public void controlGroupState(String hubId, String groupId, HubStateCmd cmd) {
-		groupService.controlHubState(credentials, cmd, hubId, groupId);
+	public void controlGroupState(String hubId, String groupId, HubStateCmd cmd, boolean ignoreProblems) {
+		groupService.controlHubState(credentials, cmd, hubId, groupId, ignoreProblems);
 	}
 
 }

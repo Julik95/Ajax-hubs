@@ -1,5 +1,4 @@
-
-package ajax.systems.company.hubs.dto.hub;
+package ajax.systems.company.hubs.dto.error;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -14,12 +13,10 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(Include.NON_NULL)
-public class HubDetail {
+public class ArmingPreventObject {
 	
-	private String name;
-	private HubState state;
-	private HubColor color ;
-	private Boolean groupsEnabled;
-	private HubSubType hubSubtype;
+	private String sourceType;
+	private String sourceId;
+	private String code;
 
 }

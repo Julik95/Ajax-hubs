@@ -26,7 +26,7 @@
 		</BorderPane>
 		<ScrollPane styleClass="hub-list-scroll-pane" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER">
 			<content>
-				<FlowPane fx:id="hubsListRoot" alignment="TOP_LEFT" hgap="10.0" vgap="10.0" >
+				<FlowPane fx:id="hubsListRoot" alignment="TOP_LEFT" hgap="20.0" vgap="15.0" >
 				   <padding>
 				      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
 				   </padding>

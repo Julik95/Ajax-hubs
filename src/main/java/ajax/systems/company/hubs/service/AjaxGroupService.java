@@ -47,10 +47,10 @@ private Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Override
 	public ResponseEntity<Void> controlHubState(Credentials credentials, HubStateCmd cmd, String hubId,
-			String groupId) {
+			String groupId, boolean ignoreProblems) {
 		if(StringUtils.hasText(hubId) && StringUtils.hasText(groupId) &&StringUtils.hasText(credentials.getCompanyId())) {
 			logger.info("PUT request to change hub's {} group {} state to: {}", hubId, groupId, cmd.getComand());
-			ControlStateRequest request = new ControlStateRequest(true, cmd);
+			ControlStateRequest request = new ControlStateRequest(ignoreProblems, cmd);
 			HttpEntity<ControlStateRequest> requestEntity = new HttpEntity<>(request, getDefaultHeaders(credentials));
 			Map<String, String> params = new HashMap<>();
 			params.put("companyId", credentials.getCompanyId());
