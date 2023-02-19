@@ -33,7 +33,7 @@ public class AjaxHubsApplication extends Application{
 	@Override
 	public void start(Stage stage) throws Exception {
 		if(root != null) {
-	        JFXDecorator decorator = new JFXDecorator(stage, root);
+	        JFXDecorator decorator = new JFXDecorator(stage, root, false, true, true);
 	        decorator.setCustomMaximize(true);
 	        decorator.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
 	        Scene scene = new Scene(decorator);
