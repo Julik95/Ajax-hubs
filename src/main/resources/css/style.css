@@ -114,7 +114,6 @@
 }
 
 .hub-name-label{
-	-fx-font-weight: ITALIC;
 	-fx-font-size: 12;
 }
 .menu-option{
@@ -157,7 +156,7 @@
 
 .dialog-title{
 	-fx-font-size: 16px;
-	-fx-font-weight: bold,
+	-fx-font-weight: bold
 }
 
 .custom-combobox{
