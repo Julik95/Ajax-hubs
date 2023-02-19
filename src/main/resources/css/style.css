@@ -165,18 +165,15 @@
 }
 
 .combo-box .list-view .list-cell {
-    -fx-text-fill: #000;
     -fx-font-size: 12;
 }
 
 .combo-box-popup .list-view .list-cell:filled:selected:hover{
     -fx-background-color: #BBDEFB;
-    -fx-text-fill: #FFF;
 }
 
 .combo-box-popup .list-view .list-cell:filled:hover{
     -fx-background-color: #BBDEFB;
-    -fx-text-fill: #FFF;
 }
 .jfx-combo-box > .prompt-container {
     -fx-alignment: center;
@@ -184,8 +181,8 @@
 
 .combo-box-popup .list-view .list-cell:filled:selected{
     -fx-background-color: #2196F3;
-    -fx-text-fill: #FFF;
 }
+
 .combo-box>.list-cell {
     -fx-alignment: center;
 }

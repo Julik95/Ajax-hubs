@@ -206,15 +206,14 @@ public class MainFrameController extends MainController implements Initializable
 	private void retrieveDataFromAjax(Credentials credentials) {
 		Thread retrieveDataExecutor = new Thread(() -> {
 			if(credentials != null) {
-				updateLoadingText("Start retrieving data from Ajax Systems");
+				updateLoadingText("Recupero dati dll'Ajax Systems in corso..");
 				try {
 					ResponseEntity<HubCompanyBinding[]> response = hubService.listHubsPerCompany(credentials);
 					if(response != null){
 						this.credentials = credentials;
-						updateLoadingText(String.format("Recupero hub %d info da Ajax Systems", response.getBody().length));
 						List<CompanyHub> companyHubs = enrichHubDetails(credentials, response.getBody());
 						if(companyHubs != null) {
-							updateLoadingText(String.format("Dati dei Hub sono stati recuperati, preparo la UI", response.getBody().length));
+							updateLoadingText(String.format("Sono stati recuperati i dati di %d centrali, preparo la UI", response.getBody().length));
 							Platform.runLater(() -> {
 								DataSingleton.getInstance().setData(companyHubs);
 								switchToView(ViewName.HUBS_LIST);
@@ -245,7 +244,7 @@ public class MainFrameController extends MainController implements Initializable
 		List<CompanyHub> result = new ArrayList<>();
 		if(hubs != null) {
 			for(HubCompanyBinding hubBinding : hubs) {
-				updateLoadingText(String.format("Start retrieving details for hub: %s", hubBinding.getHubId()));
+				updateLoadingText(String.format("Recupero le informazioni per la centrale: %s", hubBinding.getHubId()));
 				CompanyHub companyHub = new CompanyHub();
 				companyHub.setHubId(hubBinding.getHubId());
 				ExecutorService hubDetailsRequestExecutor = Executors.newSingleThreadExecutor();

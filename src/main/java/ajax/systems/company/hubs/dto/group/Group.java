@@ -18,8 +18,7 @@ public class Group {
 	private String id;
 	private String groupName;
 	private State state;
-	private Boolean bulkArmInvolved;
-    private Boolean bulkDisarmInvolved;
+	
 	
 
     public String toString() {

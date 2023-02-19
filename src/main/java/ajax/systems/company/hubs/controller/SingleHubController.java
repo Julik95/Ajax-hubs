@@ -19,6 +19,7 @@ import com.jfoenix.controls.JFXPopup.PopupHPosition;
 import com.jfoenix.controls.JFXPopup.PopupVPosition;
 
 import ajax.systems.company.hubs.dto.group.Group;
+import ajax.systems.company.hubs.dto.group.State;
 import ajax.systems.company.hubs.dto.hub.HubColor;
 import ajax.systems.company.hubs.dto.hub.HubDetail;
 import ajax.systems.company.hubs.dto.hub.HubState;
@@ -217,6 +218,7 @@ public class SingleHubController implements Initializable{
 		try {
 			mainController.controlHubState(companyHub.getHubId(), HubStateCmd.DISARM, true);
 			companyHub.getHubDetails().setState(HubState.DISARMED);
+			switchGroupsToState(State.DISARMED);
 			Platform.runLater(() -> {
 				options = null;
 				mainController.showSnackBar(String.format(ALARM_DISARMED_MESSAGE, companyHub.getObjectInfoes()[0].getName()));
@@ -360,6 +362,12 @@ public class SingleHubController implements Initializable{
 			new Thread(ingoreAction).start();
 		});
 		dialog.show();
+	}
+	
+	private void switchGroupsToState(State state) {
+		for(Group group: companyHub.getGroups()) {
+			group.setState(state);
+		}
 	}
 	
 	public void refreshCompanyHub(CompanyHub updated) {

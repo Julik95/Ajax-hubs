@@ -2,6 +2,7 @@ package ajax.systems.company.hubs.controller;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -12,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import com.jfoenix.controls.JFXTextField;
@@ -89,20 +91,37 @@ public class HubsListController implements Initializable{
 			Thread refreshWorker = new Thread(() -> {
 				Platform.runLater(()->{mainController.showLoadingPane();}); 
 				List<CompanyHub> companyHubs = mainController.getCompanyHubs();
-				if(companyHubs != null) {
-					hubsListRoot.getChildren().stream().forEach(child -> {
+				if(!CollectionUtils.isEmpty(companyHubs)) {
+					List<Node> toRemove = new ArrayList<>();
+					for(Node child : hubsListRoot.getChildren()) {
 						SingleHubController controller = (SingleHubController) child.getUserData();
 						if(controller != null) {
 							String hubId = controller.getCompanyHub().getHubId();
-							Optional<CompanyHub> hub = companyHubs.stream()
-									.filter(companyHub -> companyHub!=null && hubId.equalsIgnoreCase(companyHub.getHubId()))
-									.findFirst();
-							hub.ifPresent(companyHub -> {
-								controller.refreshCompanyHub(companyHub);
-							});
+							if(StringUtils.hasText(hubId)) {
+								Optional<CompanyHub> hub = companyHubs.stream()
+										.filter(companyHub -> companyHub!=null && hubId.equalsIgnoreCase(companyHub.getHubId()))
+										.findFirst();
+								if(hub.isPresent()) {
+									controller.refreshCompanyHub(hub.get());
+									companyHubs.remove(hub.get());
+								}else {
+									toRemove.add(child);
+								}
+							}
 						}
-					});
-					
+					}
+					if(toRemove.size() > 0) {
+						Platform.runLater(() -> {
+							hubsListRoot.getChildren().removeAll(toRemove);
+						});
+					}
+					if(companyHubs.size() > 0) {
+						Platform.runLater(()-> {});Platform.runLater(()-> {
+							companyHubs.forEach(companyHub -> {
+								initHub(companyHub);
+							});
+						});
+					}
 				}
 				Platform.runLater(()->{mainController.hideLoadingPane(null);}); 
 			});
@@ -116,11 +135,13 @@ public class HubsListController implements Initializable{
 				hubsListRoot.getChildren().addAll(childNodesOrigin.stream()
 						.filter(node -> {
 							if(node.getUserData() != null) {
-								CompanyHub hub = (CompanyHub) node.getUserData();
-								if(hub.getObjectInfoes() != null && hub.getObjectInfoes().length == 1) {
-									ObjectBriefInfo object = hub.getObjectInfoes()[0];
-									return (StringUtils.hasLength(object.getName()) && object.getName().toLowerCase().startsWith(newValue.toLowerCase())) || 
-											(StringUtils.hasLength(object.getId()) && object.getId().toLowerCase().startsWith(newValue.toLowerCase()));
+								SingleHubController hubController = (SingleHubController) node.getUserData();
+								CompanyHub hub = hubController.getCompanyHub();
+								if(hub != null) {
+									if(hub.getObjectInfoes() != null && hub.getObjectInfoes().length == 1) {
+										ObjectBriefInfo object = hub.getObjectInfoes()[0];
+										return (StringUtils.hasLength(object.getName()) && object.getName().toLowerCase().startsWith(newValue.toLowerCase()));
+									}
 								}
 							}
 							return false;
