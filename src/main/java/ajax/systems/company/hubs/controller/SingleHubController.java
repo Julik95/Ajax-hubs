@@ -28,7 +28,9 @@ import ajax.systems.company.hubs.dto.hub.HubSubType;
 import ajax.systems.company.hubs.exception.Response412ArmException;
 import ajax.systems.company.hubs.model.CompanyHub;
 import ajax.systems.company.hubs.model.DataSingleton;
+import ajax.systems.company.hubs.utils.Assets;
 import ajax.systems.company.hubs.utils.Constants;
+import ajax.systems.company.hubs.utils.HubUtils;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -171,9 +173,9 @@ public class SingleHubController implements Initializable{
 			if(companyHub.getHubDetails().getHubSubtype() == HubSubType.HUB_HYBRID || companyHub.getHubDetails().getHubSubtype() == HubSubType.HUB_HYBRID_4G) {
 				hubType = "hybrid-";
 			}
-			String hubImagePath = "/assets/" + hubType + hubColor + "-hub.png";
+			String hubImagePath = "imgs/"+hubType + hubColor + "-hub.png";
 			onHubStateChange();
-			hubImage.setImage(new Image(getClass().getResource(hubImagePath).toExternalForm()));
+			hubImage.setImage(new Image(HubUtils.getAsset(hubImagePath)));
 		}else {
 			
 		}
@@ -342,14 +344,14 @@ public class SingleHubController implements Initializable{
 			headingMessage = ARM_GENERIC_ERROR_HEADING;
 		}
 		JFXButton controlAction = new JFXButton(CONTROL_TEXT);
-		controlAction.setGraphic(new ImageView(new Image(getClass().getResource(Constants.CHECK_BLUE_ICON).toExternalForm())));
+		controlAction.setGraphic(new ImageView(new Image(HubUtils.getAsset(Assets.CHECK_BLUE_ICON))));
 		controlAction.setButtonType(ButtonType.FLAT);
 		controlAction.getStyleClass().addAll("custom-button", "text-blue");
 		JFXButton ignoreAction = new JFXButton(IGNOR_TEXT);
-		ImageView ignoreButtonIcon = new ImageView(new Image(getClass().getResource(Constants.ARM_WHITE_ICON).toExternalForm()));
+		ImageView ignoreButtonIcon = new ImageView(new Image(HubUtils.getAsset(Assets.ARM_WHITE_ICON)));
 		String ignoreButtonStyleClass = "back-red";
 		if(isNightMode) {
-			ignoreButtonIcon.setImage(new Image(getClass().getResource(Constants.ARM_WHITE_ICON).toExternalForm()));
+			ignoreButtonIcon.setImage(new Image(HubUtils.getAsset(Assets.ARM_WHITE_ICON)));
 			ignoreButtonStyleClass = "back-violet";
 		}
 		ignoreAction.setGraphic(ignoreButtonIcon);

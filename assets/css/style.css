@@ -1,5 +1,4 @@
 .root-panel{
-	-fx-font-family: "Arial";
     -fx-font-smoothing-type: grey;
 }
 .font-color-white{
@@ -33,10 +32,8 @@
 	-jfx-focus-color: #2196F3;
 }
 .title-label{
-	-fx-font-weight: bold;
+	-fx-font-family: "Roboto Bold";
 	-fx-text-fill: #FFF;
-	-fx-font-family: "Arial";
-    -fx-font-smoothing-type: gray;
 }
 
 .custom-button{
@@ -209,15 +206,19 @@
 }
 .arm-context-option{
 	-fx-text-fill: #E53935;
+	-fx-font-family: "Roboto Medium";
 }
 .night-mode-context-option{
 	-fx-text-fill: #5E35B1;
+	-fx-font-family: "Roboto Medium";
 }
 .disarm-context-option{
 	-fx-text-fill: #43A047;
+	-fx-font-family: "Roboto Medium";
 }
 .manage-groups-context-option{
 	-fx-text-fill: #FB8C00;
+	-fx-font-family: "Roboto Medium";
 }
 .arm-context-option:hover{
 	-fx-text-fill: #EF9A9A;
@@ -230,4 +231,7 @@
 }
 .manage-groups-context-option:hover{
 	-fx-text-fill: #FFCC80;
+}
+.jfx-decorator-title{
+	-fx-font-size: 13;
 }

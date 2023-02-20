@@ -11,8 +11,8 @@ import com.jfoenix.controls.JFXComboBox;
 
 import ajax.systems.company.hubs.dto.group.Group;
 import ajax.systems.company.hubs.dto.group.State;
-import ajax.systems.company.hubs.utils.Constants;
-import javafx.beans.binding.Bindings;
+import ajax.systems.company.hubs.utils.Assets;
+import ajax.systems.company.hubs.utils.HubUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ListCell;
@@ -53,9 +53,9 @@ public class GroupArmDialog implements Initializable{
 			optionsContainer.setVisible(true);
 		});
 		disarmGroupButton.setButtonType(ButtonType.FLAT);
-		disarmGroupButton.setGraphic(new ImageView(new Image(getClass().getResource(Constants.DISARM_GREEN_ICON).toExternalForm())));
+		disarmGroupButton.setGraphic(new ImageView(new Image(HubUtils.getAsset(Assets.DISARM_GREEN_ICON))));
 		armGroupButton.setButtonType(ButtonType.FLAT);
-		armGroupButton.setGraphic(new ImageView(new Image(getClass().getResource(Constants.ARM_RED_ICON).toExternalForm())));
+		armGroupButton.setGraphic(new ImageView(new Image(HubUtils.getAsset(Assets.ARM_RED_ICON))));
 		disarmGroupButton.setOnMouseClicked(event ->{
 			singleHubController.hideDialog();
 			Group selectedGroup = gropsCombobox.getSelectionModel().getSelectedItem();

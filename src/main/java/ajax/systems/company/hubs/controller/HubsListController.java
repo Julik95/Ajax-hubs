@@ -21,7 +21,8 @@ import com.jfoenix.controls.JFXTextField;
 import ajax.systems.company.hubs.dto.object.ObjectBriefInfo;
 import ajax.systems.company.hubs.model.CompanyHub;
 import ajax.systems.company.hubs.model.DataSingleton;
-import ajax.systems.company.hubs.utils.Constants;
+import ajax.systems.company.hubs.utils.Assets;
+import ajax.systems.company.hubs.utils.HubUtils;
 import ajax.systems.company.hubs.view.ViewName;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -82,11 +83,12 @@ public class HubsListController implements Initializable{
 		} catch (IOException ex) {
 			mainController.handleException(ex, String.format("Error occured during loading HUB's()%s view", companyHub.getHubId()));
 			logger.warn("Error occured during loading HUB's({}) view", companyHub.getHubId());
+			ex.printStackTrace();
 		}
 	}
 	
 	private void initTopPanel(List<CompanyHub> hubs) {
-		refreshIcon.setImage(new Image(getClass().getResource(Constants.REFRESH_WHITE_ICON).toExternalForm()));
+		refreshIcon.setImage(new Image(HubUtils.getAsset(Assets.REFRESH_WHITE_ICON)));
 		refreshIcon.setOnMouseClicked(event -> {
 			Thread refreshWorker = new Thread(() -> {
 				Platform.runLater(()->{mainController.showLoadingPane();}); 

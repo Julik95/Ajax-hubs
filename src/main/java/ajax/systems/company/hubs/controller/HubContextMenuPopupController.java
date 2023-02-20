@@ -3,11 +3,11 @@ package ajax.systems.company.hubs.controller;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import ajax.systems.company.hubs.dto.hub.HubState;
-import ajax.systems.company.hubs.utils.Constants;
+import ajax.systems.company.hubs.utils.Assets;
+import ajax.systems.company.hubs.utils.HubUtils;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -40,8 +40,8 @@ public class HubContextMenuPopupController implements Initializable{
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		ImageView armRedIcon = new ImageView(new Image(getClass().getResource(Constants.ARM_RED_ICON).toExternalForm()));
-		ImageView armLightRedIcon = new ImageView(new Image(getClass().getResource(Constants.ARM_LIGHT_RED_ICON).toExternalForm()));
+		ImageView armRedIcon = new ImageView(new Image(HubUtils.getAsset(Assets.ARM_RED_ICON)));
+		ImageView armLightRedIcon = new ImageView(new Image(HubUtils.getAsset(Assets.ARM_LIGHT_RED_ICON)));
 		armOption.graphicProperty().bind(Bindings.when(armOption.hoverProperty()).then(armLightRedIcon).otherwise(armRedIcon));
 		armOption.setOnMouseClicked(event -> {
 			singleHubController.hideOptions();
@@ -49,8 +49,8 @@ public class HubContextMenuPopupController implements Initializable{
 				singleHubController.armHub(false);
 			}).start();
 		});
-		ImageView armNightVioletIcon = new ImageView(new Image(getClass().getResource(Constants.ARM_NIGHT_VIOLET_ICON).toExternalForm()));
-		ImageView armNightLightVioletIcon = new ImageView(new Image(getClass().getResource(Constants.ARM_NIGHT_LIGHT_VIOLET_ICON).toExternalForm()));
+		ImageView armNightVioletIcon = new ImageView(new Image(HubUtils.getAsset(Assets.ARM_NIGHT_VIOLET_ICON)));
+		ImageView armNightLightVioletIcon = new ImageView(new Image(HubUtils.getAsset(Assets.ARM_NIGHT_LIGHT_VIOLET_ICON)));
 		armNightModeOption.graphicProperty().bind(Bindings.when(armNightModeOption.hoverProperty()).then(armNightLightVioletIcon).otherwise(armNightVioletIcon));
 		armNightModeOption.setOnMouseClicked(event -> {
 			singleHubController.hideOptions();
@@ -58,8 +58,8 @@ public class HubContextMenuPopupController implements Initializable{
 				singleHubController.armNightMode(false);
 			}).start();
 		});
-		ImageView disarmGreenIcon = new ImageView(new Image(getClass().getResource(Constants.DISARM_GREEN_ICON).toExternalForm()));
-		ImageView disarmLightGreenIcon = new ImageView(new Image(getClass().getResource(Constants.DISARM_LIGHT_GREEN_ICON).toExternalForm()));
+		ImageView disarmGreenIcon = new ImageView(new Image(HubUtils.getAsset(Assets.DISARM_GREEN_ICON)));
+		ImageView disarmLightGreenIcon = new ImageView(new Image(HubUtils.getAsset(Assets.DISARM_LIGHT_GREEN_ICON)));
 		disarmOption.graphicProperty().bind(Bindings.when(disarmOption.hoverProperty()).then(disarmLightGreenIcon).otherwise(disarmGreenIcon));
 		disarmOption.setOnMouseClicked(event -> {
 			singleHubController.hideOptions();
@@ -67,8 +67,8 @@ public class HubContextMenuPopupController implements Initializable{
 				singleHubController.disarmHub();
 			}).start();
 		});
-		ImageView manageGroupsOrangeIcon = new ImageView(new Image(getClass().getResource(Constants.GROUPS_ORANGE_ICON).toExternalForm()));
-		ImageView manageGroupsLightOrangeIcon = new ImageView(new Image(getClass().getResource(Constants.GROUPS_LIGHT_ORANGE_ICON).toExternalForm()));
+		ImageView manageGroupsOrangeIcon = new ImageView(new Image(HubUtils.getAsset(Assets.GROUPS_ORANGE_ICON)));
+		ImageView manageGroupsLightOrangeIcon = new ImageView(new Image(HubUtils.getAsset(Assets.GROUPS_LIGHT_ORANGE_ICON)));
 		manageGroupsOption.graphicProperty().bind(Bindings.when(manageGroupsOption.hoverProperty()).then(manageGroupsLightOrangeIcon).otherwise(manageGroupsOrangeIcon));
 		manageGroupsOption.setOnMouseClicked(event -> {
 			singleHubController.hideOptions();
