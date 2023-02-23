@@ -14,15 +14,17 @@
 	<children>
 		<BorderPane styleClass="hubs-list-top-panel">
 			<padding>
-		      <Insets bottom="10.0" left="25.0" right="10.0" top="10.0" />
+		      <Insets bottom="10.0" left="25.0" right="10.0" top="13.0" />
 		   </padding>
 		   <left>
-		   		<ImageView styleClass="refresh-icon" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" fx:id="refreshIcon">
-		   		</ImageView>
+		   		<ImageView styleClass="refresh-icon" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" fx:id="refreshIcon" />
 		   </left>
 		   <center>	
 	        	<JFXTextField fx:id="searchHubField" labelFloat="true" alignment="BASELINE_CENTER" styleClass="hubs-list-top-panel-text-field" maxWidth="500" promptText="Inserire il nome o l'Object ID per effettuare la ricerca"/>
 		   </center>
+		   <right>
+		   	<ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" fx:id="aboutIcon" />
+		   </right>
 		</BorderPane>
 		<ScrollPane styleClass="hub-list-scroll-pane" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER">
 			<content>

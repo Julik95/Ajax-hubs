@@ -19,7 +19,9 @@ public enum Assets {
 	ARM_NIGHT_WHITE_ICON("imgs/arm-night-white.png"),
 	GROUPS_ORANGE_ICON("imgs/groups-orange.png"),
 	GROUPS_LIGHT_ORANGE_ICON("imgs/groups-light-orange.png"),
-	CHECK_BLUE_ICON("imgs/check-blue.png");
+	INFO_WHITE_ICON("imgs/info-white.png"),
+	CHECK_BLUE_ICON("imgs/check-blue.png"),
+	FEEDBACK_COLORED_ICON("imgs/feedback-colored.png");
 
 	String path;
 

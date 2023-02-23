@@ -32,6 +32,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -51,7 +52,7 @@ public class HubsListController implements Initializable{
 	private Pane hubsListRoot;
 	
 	@FXML
-	private ImageView refreshIcon;
+	private ImageView refreshIcon,aboutIcon;
 	
 	@FXML
 	private JFXTextField searchHubField;
@@ -66,8 +67,24 @@ public class HubsListController implements Initializable{
 			});
 			initTopPanel(hubs);
 		}
-		logger.info("Hub's list has been initialized");
 		
+		aboutIcon.setImage(new Image(HubUtils.getAsset(Assets.INFO_WHITE_ICON)));
+		aboutIcon.setOnMouseClicked(event -> {
+			try {
+				FXMLLoader loader = new FXMLLoader(getClass().getResource(ViewName.ABOUT.getName()));
+				loader.setControllerFactory(springContext::getBean);
+				Parent root = loader.load();
+				if(root != null) {
+					Label abountTitle = new Label("Informazioni");
+					abountTitle.getStyleClass().addAll("title-dialog", "font-18");
+					mainController.getDialog(abountTitle, root).show();
+				}
+			}catch(IOException ex) {
+				mainController.handleException(ex,"Error occured during loading about view");
+				logger.warn("Error occured during loading about view");
+				ex.printStackTrace();
+			}
+		});
 	}
 
 	private void initHub(CompanyHub companyHub) {

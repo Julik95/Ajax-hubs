@@ -4,8 +4,6 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import ajax.systems.company.hubs.controller.MainController;
-
 @Configuration
 public class AppConfig {
 

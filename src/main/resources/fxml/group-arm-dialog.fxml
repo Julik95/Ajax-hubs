@@ -17,8 +17,8 @@
       			<Insets bottom="0" left="20.0" right="20.0" top="20.0" />
    			</padding>
 			<children>
-				<JFXButton styleClass="custom-button, text-green" fx:id="disarmGroupButton" text="Disinserisci" />
-				<JFXButton styleClass="custom-button, text-red" fx:id="armGroupButton" text="Inserisci" />
+				<JFXButton styleClass="custom-button, text-green, bg-transparent" fx:id="disarmGroupButton" text="Disinserisci" />
+				<JFXButton styleClass="custom-button, text-red, bg-transparent" fx:id="armGroupButton" text="Inserisci" />
 			</children>
 		</HBox>
 	</children>

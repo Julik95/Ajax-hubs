@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXButton.ButtonType;
 import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXDialogLayout;
 import com.jfoenix.controls.JFXSnackbar;
@@ -114,22 +115,22 @@ public class MainFrameController extends MainController implements Initializable
 	    ft.play();
 	}
 	
-	public JFXDialog showDialog(Node heading, Node content) {
+	public JFXDialog getDialog(Node heading, Node content) {
 		JFXDialogLayout dialogLayout = new JFXDialogLayout();
-		JFXDialog dialog = new JFXDialog(rootStackPane, dialogLayout, JFXDialog.DialogTransition.CENTER);
 		dialogLayout.setHeading(heading);
 		dialogLayout.setBody(content);
-		dialog.setOnMouseClicked((event) ->{
-			dialog.close();
-		});
-		dialog.show();
+		JFXButton closeDialog = new JFXButton(CLOSE_LABEL);
+		closeDialog.getStyleClass().add("padding-5");
+		closeDialog.setButtonType(ButtonType.FLAT);
+		dialogLayout.setActions(closeDialog);
+		JFXDialog dialog = new JFXDialog(rootStackPane, dialogLayout, JFXDialog.DialogTransition.CENTER);
+		closeDialog.setOnMouseClicked(event -> {dialog.close();});
 		return dialog;
 	}
 	public JFXDialog handleArmException(String headingMessage, String bodyMessage, JFXButton ...actions) {
 		JFXDialogLayout armErrorLayout = new JFXDialogLayout();
 		Label heading = new Label(headingMessage);
 		Label message = new Label(bodyMessage);
-		
 		heading.getStyleClass().add("arm-error-heading");
 		message.getStyleClass().add("error-message");
 		message.setWrapText(true);
@@ -141,11 +142,12 @@ public class MainFrameController extends MainController implements Initializable
 		return dialog;
 	}
 	public void handleException(Exception ex, String title){
-		JFXDialogLayout alertLayout = new JFXDialogLayout();
 		Label heading = new Label(title);
-		heading.getStyleClass().add("error-heading");
+		heading.getStyleClass().addAll("font-18", "error-heading");
 		Label messageTxt = new Label();
 		messageTxt.getStyleClass().add("error-message");
+		messageTxt.setWrapText(true);
+		messageTxt.setMaxWidth(720);
 		if(ex instanceof Response4xxException) {
 			Response4xxException error = (Response4xxException) ex;
 			if(error.getError() != null) {
@@ -171,15 +173,7 @@ public class MainFrameController extends MainController implements Initializable
 		}else {
 			messageTxt.setText(ex.getMessage());
 		}
-		alertLayout.setHeading(heading);
-		alertLayout.setBody(new StackPane(messageTxt));
-		JFXButton action = new JFXButton(CLOSE_LABEL);
-		alertLayout.setActions(action);
-		JFXDialog dialog = new JFXDialog(rootStackPane, alertLayout, JFXDialog.DialogTransition.CENTER);
-		action.setOnMouseClicked((event) ->{
-			dialog.close();
-		});
-		hideLoadingPane(()->{ dialog.show(); });
+		Platform.runLater(() -> {getDialog(heading, messageTxt).show();});
 	}
 	
 	@Override
@@ -281,12 +275,15 @@ public class MainFrameController extends MainController implements Initializable
 					}
 				}catch(Exception ex) {
 					logger.warn("Error occured during parallel service call to Ajax Systems, {}",ex);
+					companyHub = null;
 					ex.printStackTrace();
 				}
 				hubDetailsRequestExecutor.shutdown();
 				hubObjectsRequestExecutor.shutdown();
 				hubGroupsRequestExecutor.shutdown();
-				result.add(companyHub);
+				if(companyHub != null) {
+					result.add(companyHub);
+				}
 			}
 		}
 		return result;

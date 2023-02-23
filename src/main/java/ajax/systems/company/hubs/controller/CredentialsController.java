@@ -10,22 +10,16 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXDialog;
-import com.jfoenix.controls.JFXDialogLayout;
 import com.jfoenix.controls.JFXTextField;
 
-import ajax.systems.company.hubs.exception.Response4xxException;
-import ajax.systems.company.hubs.exception.Response5xxException;
 import ajax.systems.company.hubs.model.Credentials;
 import ajax.systems.company.hubs.utils.Constants;
-import javafx.animation.FadeTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.util.Duration;
 
 @Component
 public class CredentialsController implements Initializable{

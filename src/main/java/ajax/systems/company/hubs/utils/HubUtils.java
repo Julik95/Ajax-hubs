@@ -32,7 +32,7 @@ public class HubUtils {
 		File file = new File(Constants.ASSETS_DIR +asset.getPath());
 		String absPath = "";
 		if(file.exists()) {
-			absPath = "file:///" + file.getAbsolutePath().replace("\\", "/");
+			absPath = "file:" + file.getPath().replace("\\", "/");
 		}
 		return absPath;
 	}
@@ -41,7 +41,7 @@ public class HubUtils {
 		File file = new File(Constants.ASSETS_DIR +fileName);
 		String absPath = "";
 		if(file.exists()) {
-			absPath = "file:///" + file.getAbsolutePath().replace("\\", "/");
+			absPath = "file:" + file.getPath().replace("\\", "/");
 		}
 		return absPath;
 	}
@@ -54,7 +54,7 @@ public class HubUtils {
 		for (File css : cssDir.listFiles()) {
 			if(css.isFile() && FilenameUtils.getExtension(css.getAbsolutePath()).equalsIgnoreCase("css")) {
 				logger.info("Retrieving styleshet {}", css.getAbsolutePath());
-				result.add("file:///" + css.getAbsolutePath().replace("\\", "/"));
+				result.add("file:" + css.getPath().replace("\\", "/"));
 			}		
 		}
 		return result;

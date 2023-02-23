@@ -5,7 +5,6 @@ import java.util.List;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDialog;
 
-import ajax.systems.company.hubs.dto.hub.HubCompanyBinding;
 import ajax.systems.company.hubs.dto.hub.HubDetail;
 import ajax.systems.company.hubs.dto.hub.HubStateCmd;
 import ajax.systems.company.hubs.model.CompanyHub;
@@ -23,7 +22,7 @@ public abstract class MainController {
 	abstract void hideLoadingPane(Runnable onFinished);
 	abstract public void handleException(Exception ex, String title);
 	abstract void showSnackBar(String message);
-	abstract JFXDialog showDialog(Node heading, Node content);
+	abstract JFXDialog getDialog(Node heading, Node content);
 	abstract public void controlHubState(String hubId, HubStateCmd cmd, boolean ignoreProblems);
 	abstract public void controlGroupState(String hubId, String groupId, HubStateCmd cmd, boolean ignoreProblems);
 	abstract public JFXDialog handleArmException(String headingMessage, String bodyMessage, JFXButton ...actions);

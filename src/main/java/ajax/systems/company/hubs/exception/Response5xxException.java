@@ -3,7 +3,6 @@ package ajax.systems.company.hubs.exception;
 import org.springframework.http.HttpStatus;
 
 import ajax.systems.company.hubs.dto.error.ErrorMessage;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 

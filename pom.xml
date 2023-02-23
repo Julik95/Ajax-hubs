@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>ajax.systems.company</groupId>
 	<artifactId>hubs</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.1</version>
 	<name>Ajax-hubs</name>
 	<description>Desktop application to manage ajax hubs within company account</description>
 	
@@ -169,6 +169,32 @@
 						</path>
 					</annotationProcessorPaths>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+				    <archive>
+				        <manifest>
+				            <mainClass>org.programirame.Main</mainClass>
+				            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+				        </manifest>
+				    </archive>
+				</configuration>
+			</plugin>
+			<plugin>
+			    <groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-assembly-plugin</artifactId>
+			    <configuration>
+			        <descriptorRefs>
+			            <descriptorRef>jar-with-dependencies</descriptorRef>
+			        </descriptorRefs>
+			        <archive>
+			            <manifest>  
+			              <addDefaultImplementationEntries>true</addDefaultImplementationEntries> 
+			            </manifest>
+			        </archive>
+			    </configuration>
 			</plugin>
 		</plugins>
 	</build>

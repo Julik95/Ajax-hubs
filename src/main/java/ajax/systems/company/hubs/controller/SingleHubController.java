@@ -2,6 +2,7 @@ package ajax.systems.company.hubs.controller;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 
 import org.slf4j.Logger;
@@ -29,8 +30,8 @@ import ajax.systems.company.hubs.exception.Response412ArmException;
 import ajax.systems.company.hubs.model.CompanyHub;
 import ajax.systems.company.hubs.model.DataSingleton;
 import ajax.systems.company.hubs.utils.Assets;
-import ajax.systems.company.hubs.utils.Constants;
 import ajax.systems.company.hubs.utils.HubUtils;
+import ajax.systems.company.hubs.view.ViewName;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -113,7 +114,8 @@ public class SingleHubController implements Initializable{
 	protected void showGroupsDialog() {
 		Node content = initGroupsDialogContent();
 		if(content != null) {
-			dialog = mainController.showDialog(initGroupsDialogHeading(), content);
+			dialog = mainController.getDialog(initGroupsDialogHeading(), content);
+			dialog.show();
 		}
 		
 	}
@@ -138,7 +140,7 @@ public class SingleHubController implements Initializable{
 	
 	private Node initGroupsDialogContent() {
 		if(StringUtils.hasText(companyHub.getHubId())) {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/group-arm-dialog.fxml"));
+			FXMLLoader loader = new FXMLLoader(getClass().getResource(ViewName.GROUP_ARM_DIALOG.getName()));
 			try {
 				VBox rootPopup = loader.load();
 				GroupArmDialog controller = (GroupArmDialog) loader.getController();
@@ -190,7 +192,7 @@ public class SingleHubController implements Initializable{
 	
 	private void initPopup() {
 		if(StringUtils.hasText(companyHub.getHubId())) {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/hub-context-popup.fxml"));
+			FXMLLoader loader = new FXMLLoader(getClass().getResource(ViewName.CONTEXT_MENU.getName()));
 			try {
 				VBox rootPopup = loader.load();
 				HubContextMenuPopupController controller = (HubContextMenuPopupController) loader.getController();
@@ -294,7 +296,11 @@ public class SingleHubController implements Initializable{
 	protected void armNightMode(boolean ignoreProblems) {
 		try {
 			mainController.controlHubState(companyHub.getHubId(), HubStateCmd.NIGHT_MODE_ON, ignoreProblems);
-			companyHub.getHubDetails().setState(HubState.NIGHT_MODE);
+			if(checkIfAllAreaAreArmed()) {
+				companyHub.getHubDetails().setState(HubState.ARMED_NIGHT_MODE_ON);
+			}else {
+				companyHub.getHubDetails().setState(HubState.NIGHT_MODE);
+			}
 			Platform.runLater(() -> {
 				options = null;
 				mainController.showSnackBar(String.format(ALARM_NIGHT_MODE_ARMED_MESSAGE, companyHub.getObjectInfoes()[0].getName()));
@@ -310,6 +316,12 @@ public class SingleHubController implements Initializable{
 			logger.error("Error occured during arming hight mode hub {}, {}", companyHub.getHubId(), ex.getMessage());
 			mainController.handleException(ex, ERROR_DIALOG_TITLE);
 		}
+	}
+	
+	private boolean checkIfAllAreaAreArmed() {
+		return Arrays.asList(companyHub.getGroups())
+			.stream()
+			.allMatch(group -> group.getState() == State.ARMED);
 	}
 	
 	private void updateHubDetails(Runnable callBack) {
@@ -346,7 +358,7 @@ public class SingleHubController implements Initializable{
 		JFXButton controlAction = new JFXButton(CONTROL_TEXT);
 		controlAction.setGraphic(new ImageView(new Image(HubUtils.getAsset(Assets.CHECK_BLUE_ICON))));
 		controlAction.setButtonType(ButtonType.FLAT);
-		controlAction.getStyleClass().addAll("custom-button", "text-blue");
+		controlAction.getStyleClass().addAll("custom-button", "text-blue", "bg-transparent");
 		JFXButton ignoreAction = new JFXButton(IGNOR_TEXT);
 		ImageView ignoreButtonIcon = new ImageView(new Image(HubUtils.getAsset(Assets.ARM_WHITE_ICON)));
 		String ignoreButtonStyleClass = "back-red";
