@@ -1,27 +1,81 @@
 package ajax.systems.company.hubs;
 
-import java.io.IOException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.context.ApplicationContextInitializer;
+import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.support.GenericApplicationContext;
 
-import ajax.systems.company.hubs.utils.HubUtils;
-import ajax.systems.company.hubs.view.JFXDraggableDecorator;
-import ajax.systems.company.hubs.view.ViewName;
 import javafx.application.Application;
+import javafx.application.HostServices;
 import javafx.application.Platform;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
-@SpringBootApplication
-public class AjaxHubsApplication extends Application{
 
+public class AjaxHubsJavaFXApplication extends Application{
+	
+	private ConfigurableApplicationContext springContext;
+
+	@Override
+	public void start(Stage primaryStage) throws Exception {
+		this.springContext.publishEvent(new StageReadyEvent(primaryStage));
+		
+	}
+
+	
+	public void init() {
+		ApplicationContextInitializer<GenericApplicationContext> initializer = 
+				ac -> {
+					ac.registerBean(Application.class, () -> AjaxHubsJavaFXApplication.this);
+					ac.registerBean(Parameters.class, this::getParameters);
+					ac.registerBean(HostServices.class, this::getHostServices);
+				};
+		this.springContext = new SpringApplicationBuilder()
+				.sources(Main.class)
+				.initializers(initializer)
+				.run(getParameters().getRaw().toArray(new String[0]));
+	}
+	
+	public void stop() {
+		this.springContext.close();
+		Platform.exit();
+	}
+	
+	
+	class StageReadyEvent extends ApplicationEvent{
+		
+		private Stage stage;
+
+		public StageReadyEvent(Stage stage) {
+			super(stage);
+			this.stage = stage;
+			
+		}
+		
+		public Stage getStage() {
+			return stage;
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/*
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	private ConfigurableApplicationContext springContext;
 	private Parent root;
@@ -67,6 +121,6 @@ public class AjaxHubsApplication extends Application{
 		}
 	}
 	
-	
+	*/
 
 }
