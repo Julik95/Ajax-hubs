@@ -308,8 +308,11 @@
 }
 
 .feedback-label2:hover{
-	-fx-text-fill: #0D47A1;
-	-fx-font-size: 14;
-	-fx-font-family: "Roboto Bold";
+	-fx-text-fill: #1976D2;
+	-fx-effect: dropshadow(three-pass-box, rgba(25, 18, 210, 0.8), 15, 0, 0, 0);
 	-fx-cursor: hand;
+}
+.send-feedback-button{
+	-fx-font-size: 12px;
+	-fx-text-fill: #0D47A1;
 }

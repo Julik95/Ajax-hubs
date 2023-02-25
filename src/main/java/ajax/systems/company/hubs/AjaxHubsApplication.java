@@ -16,6 +16,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 @SpringBootApplication
@@ -38,6 +39,7 @@ public class AjaxHubsApplication extends Application{
 	        decorator.getStylesheets().addAll(HubUtils.getAllStyleAssets());
 	        Scene scene = new Scene(decorator);
 			stage.setScene(scene);
+			stage.getIcons().add(new Image("file:assets/favico.png"));
 			stage.setTitle("Ajax security system");
 			stage.show();
 		}

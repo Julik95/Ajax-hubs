@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>ajax.systems.company</groupId>
 	<artifactId>hubs</artifactId>
-	<version>1.0.1</version>
+	<version>1.0.1-RC</version>
 	<name>Ajax-hubs</name>
 	<description>Desktop application to manage ajax hubs within company account</description>
 	
