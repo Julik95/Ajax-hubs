@@ -43,6 +43,7 @@ public class GroupArmDialog implements Initializable{
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		optionsContainer.setManaged(false);
 		gropsCombobox.valueProperty().addListener((ov, oldVal, newVal) -> {
 			optionsContainer.getChildren().clear();
 			if(newVal.getState() == State.ARMED) {
@@ -50,6 +51,7 @@ public class GroupArmDialog implements Initializable{
 			}else if(newVal.getState() == State.DISARMED) {
 				optionsContainer.getChildren().add(armGroupButton);
 			}
+			optionsContainer.setManaged(true);
 			optionsContainer.setVisible(true);
 		});
 		disarmGroupButton.setButtonType(ButtonType.FLAT);

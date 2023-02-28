@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.BorderPane?>
 <?import com.jfoenix.controls.JFXTextField?>
 <?import javafx.scene.image.ImageView?>
@@ -17,13 +18,19 @@
 		      <Insets bottom="10.0" left="25.0" right="10.0" top="13.0" />
 		   </padding>
 		   <left>
-		   		<ImageView styleClass="refresh-icon" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" fx:id="refreshIcon" />
+		   		<ImageView styleClass="cursor-hand" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" fx:id="refreshIcon" />
 		   </left>
 		   <center>	
 	        	<JFXTextField fx:id="searchHubField" labelFloat="true" alignment="BASELINE_CENTER" styleClass="hubs-list-top-panel-text-field" maxWidth="500" promptText="Inserire il nome o l'Object ID per effettuare la ricerca"/>
 		   </center>
 		   <right>
-		   	<ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" fx:id="aboutIcon" />
+		   	<HBox alignment="BASELINE_CENTER" spacing="10">
+		   		<children>
+		   			<ImageView styleClass="cursor-hand" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" fx:id="paletteIcon" />
+		   			<ImageView styleClass="cursor-hand" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" fx:id="aboutIcon" />
+		   		</children>
+		   	</HBox>
+		   	
 		   </right>
 		</BorderPane>
 		<ScrollPane styleClass="hub-list-scroll-pane" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER">

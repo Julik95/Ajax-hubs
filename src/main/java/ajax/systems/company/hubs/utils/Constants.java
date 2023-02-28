@@ -7,4 +7,6 @@ public interface Constants {
 	static String X_API_KEY_HEADER = "X-Api-Key";
 	static String GET_DATA_THREAD_NAME = "RetrieveDataExecutor";
 	static String ASSETS_DIR = "assets/";
+	static String CACHE_FILE_PATH = "config/";
+	static String CACHE_FILE_NAME = "cache.dat";
 }

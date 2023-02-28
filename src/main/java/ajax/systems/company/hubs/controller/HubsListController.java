@@ -52,7 +52,7 @@ public class HubsListController implements Initializable{
 	private Pane hubsListRoot;
 	
 	@FXML
-	private ImageView refreshIcon,aboutIcon;
+	private ImageView refreshIcon,aboutIcon, paletteIcon;
 	
 	@FXML
 	private JFXTextField searchHubField;
@@ -67,7 +67,23 @@ public class HubsListController implements Initializable{
 			});
 			initTopPanel(hubs);
 		}
-		
+		paletteIcon.setImage(new Image(HubUtils.getAsset(Assets.PALETTE_WHITE_ICON)));
+		paletteIcon.setOnMouseClicked(event -> {
+			try {
+				FXMLLoader loader = new FXMLLoader(getClass().getResource(ViewName.COLOR_STATE_LEGEND.getName()));
+				loader.setControllerFactory(springContext::getBean);
+				Parent root = loader.load();
+				if(root != null) {
+					Label title = new Label("Legenda stai/colori impianto");
+					title.getStyleClass().addAll("title-dialog", "font-18");
+					mainController.getDialog(title, root).show();
+				}
+			}catch(IOException ex) {
+				mainController.handleException(ex,"Error occured during loading color staet legend view");
+				logger.warn("Error occured during loading color staet legend view");
+				ex.printStackTrace();
+			}
+		});
 		aboutIcon.setImage(new Image(HubUtils.getAsset(Assets.INFO_WHITE_ICON)));
 		aboutIcon.setOnMouseClicked(event -> {
 			try {
@@ -157,9 +173,8 @@ public class HubsListController implements Initializable{
 								SingleHubController hubController = (SingleHubController) node.getUserData();
 								CompanyHub hub = hubController.getCompanyHub();
 								if(hub != null) {
-									if(hub.getObjectInfoes() != null && hub.getObjectInfoes().length == 1) {
-										ObjectBriefInfo object = hub.getObjectInfoes()[0];
-										return (StringUtils.hasLength(object.getName()) && object.getName().toLowerCase().startsWith(newValue.toLowerCase()));
+									if(hub.getHubDetails() != null) {
+										return (StringUtils.hasLength(hub.getHubDetails().getName()) && hub.getHubDetails().getName().toLowerCase().startsWith(newValue.toLowerCase()));
 									}
 								}
 							}

@@ -13,8 +13,9 @@
       <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
    </padding>
    <children>
-      <ImageView fx:id="hubImage" fitHeight="96.0" fitWidth="96.0" pickOnBounds="true" preserveRatio="true">
-      </ImageView>
+   		<StackPane>
+   			<ImageView fx:id="hubImage" fitHeight="96.0" fitWidth="96.0" pickOnBounds="true" preserveRatio="true" />
+   		</StackPane>
       <StackPane>
    		<Label alignment="CENTER" wrapText="false" maxWidth="128" styleClass="hub-name-label" fx:id="hubName" text="Label" />
       </StackPane>

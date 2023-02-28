@@ -13,7 +13,8 @@ public enum ViewName {
 	ABOUT("/fxml/about.fxml"),
 	MAIN_FRAME("/fxml/main-frame.fxml"),
 	CONTEXT_MENU("/fxml/hub-context-popup.fxml"),
-	GROUP_ARM_DIALOG("/fxml/group-arm-dialog.fxml");
+	GROUP_ARM_DIALOG("/fxml/group-arm-dialog.fxml"),
+	COLOR_STATE_LEGEND("/fxml/color-state-legend.fxml");
 	
 	private String name;
 }

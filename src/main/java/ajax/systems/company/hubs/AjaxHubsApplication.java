@@ -17,6 +17,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
 @SpringBootApplication
@@ -37,9 +38,14 @@ public class AjaxHubsApplication extends Application{
 			JFXDraggableDecorator decorator = new JFXDraggableDecorator(stage, root, false, true, true);
 	        decorator.setCustomMaximize(true);
 	        decorator.getStylesheets().addAll(HubUtils.getAllStyleAssets());
+	        Image favico = new Image("file:assets/favico.png");
+	        ImageView image = new ImageView(favico);
+	        image.setFitWidth(22);
+	        image.setFitHeight(22);
+	        decorator.setGraphic(image);
 	        Scene scene = new Scene(decorator);
 			stage.setScene(scene);
-			stage.getIcons().add(new Image("file:assets/favico.png"));
+			stage.getIcons().add(favico);
 			stage.setTitle("Ajax security system");
 			stage.show();
 		}

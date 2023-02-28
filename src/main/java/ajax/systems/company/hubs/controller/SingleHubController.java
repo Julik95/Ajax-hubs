@@ -36,12 +36,22 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
+import javafx.scene.effect.BoxBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.RadialGradient;
+import javafx.scene.paint.Stop;
 
 
 @Component
@@ -63,10 +73,15 @@ public class SingleHubController implements Initializable{
 	@FXML
 	private VBox singleHubWrapper;
 	
+	@FXML
+	private StackPane hubImageContainer;
+	
 	@Autowired
 	private MainController mainController;
 	
 	private JFXDialog dialog;
+	
+	private boolean hubAlive = true;
 
 	
 	private final Integer MAX_HUB_NAME_LEN = 32;
@@ -76,7 +91,7 @@ public class SingleHubController implements Initializable{
 	private final String ALARM_ARMED_GROUP_MESSAGE = "L'area %s è stata inserita";
 	private final String ALARM_NIGHT_MODE_ARMED_MESSAGE = "Impianto %s è stato inserito su modalità noturna";
 	private final String ALARM_DISARMED_MESSAGE = "Impianto %s è stato disinserito";
-	private final String HUB_TOOLTIP_TEXT = "Nome Hub: %s\nHub ID: %s";
+	private final String HUB_TOOLTIP_TEXT = "Hub name: %s\nHub ID: %s";
 	private final String ARM_ERRORS_HEADING = "Ci sono un paio di problemi";
 	private final String ARM_GENERIC_ERROR_HEADING = "Errore imprevisto";
 	private final String ARM_ERROR_MESSAHE = "%s presenta qualche problema. Vorresti ricontrollare o procedere lo stesso con l'inserimento?";
@@ -90,20 +105,22 @@ public class SingleHubController implements Initializable{
 		companyHub = (CompanyHub) DataSingleton.getInstance().getData();
 		if(companyHub != null) {
 			if(companyHub.getHubDetails() != null) {
+				checkIfHubIsAlive();
 				initImageForHub();
 			}
+			hubName.setText(adjustHubName(companyHub.getHubDetails().getName()));
 			if(companyHub.getObjectInfoes() != null && companyHub.getObjectInfoes().length == 1) {
-				hubName.setText(adjustHubName(companyHub.getObjectInfoes()[0].getName()));
 				setTooltip();
 			}
 			
 		}
 		hubImage.setOnMouseClicked(mouseEvent ->{
-			if(options == null) {
-				initPopup();	
+			if(hubAlive) {
+				if(options == null) {
+					initPopup();	
+				}
+				options.show(hubImage, PopupVPosition.TOP, PopupHPosition.LEFT, mouseEvent.getX(), mouseEvent.getY());
 			}
-			logger.info("HUB {} actions pop-up", companyHub.getHubId());
-			options.show(hubImage, PopupVPosition.TOP, PopupHPosition.LEFT, mouseEvent.getX(), mouseEvent.getY());
 		});
 		logger.info("HUB's View {} has been initialized", companyHub.getHubId());
 	}
@@ -126,7 +143,7 @@ public class SingleHubController implements Initializable{
 		}
 	}
 	private void setTooltip() {
-		String tooltipTxt = String.format(HUB_TOOLTIP_TEXT,companyHub.getObjectInfoes()[0].getName(), companyHub.getHubId());
+		String tooltipTxt = String.format(HUB_TOOLTIP_TEXT,companyHub.getHubDetails().getName(), companyHub.getHubId());
 		Tooltip tooltip = new Tooltip(tooltipTxt);
 		tooltip.setStyle("-fx-font-size: 12");
 		Tooltip.install(hubImage, tooltip);
@@ -168,7 +185,7 @@ public class SingleHubController implements Initializable{
 	private void initImageForHub() {
 		if(companyHub.getHubDetails() != null ) {
 			String hubColor = "black";
-			String hubType = "";
+			String hubType = ""; 
 			if(companyHub.getHubDetails().getColor() != null && HubColor.WHITE.equals(companyHub.getHubDetails().getColor())) {
 				hubColor = "white";
 			}
@@ -183,9 +200,22 @@ public class SingleHubController implements Initializable{
 		}
 	}
 	
+	private void checkIfHubIsAlive() {
+		if(companyHub.getHubDetails() != null && (companyHub.getHubDetails().getActiveChannels() == null ||
+				companyHub.getHubDetails().getActiveChannels().isEmpty())) {
+			hubName.getStyleClass().add("opacity-045");
+			hubAlive = false;
+		}
+	}
+	
 	private void onHubStateChange() {
 		hubImage.getStyleClass().clear();
-		String sateCss = companyHub.getHubDetails().getState().getHubState().toLowerCase();
+		String sateCss = "";
+		if(hubAlive) {
+			sateCss = companyHub.getHubDetails().getState().getHubState().toLowerCase();
+		}else {
+			sateCss = "offline-hub-image";
+		}
 		hubImage.getStyleClass().add(sateCss);
 
 	}
@@ -388,7 +418,8 @@ public class SingleHubController implements Initializable{
 		logger.info("Refreshing hub's view: {}", updated.getHubId());
 		if(updated != null) {
 			companyHub = updated;
-			hubName.setText(adjustHubName(companyHub.getObjectInfoes()[0].getName()));
+			checkIfHubIsAlive();
+			hubName.setText(adjustHubName(companyHub.getHubDetails().getName()));
 			onHubStateChange();
 			setTooltip();
 		}

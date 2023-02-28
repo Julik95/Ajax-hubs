@@ -3,6 +3,7 @@ package ajax.systems.company.hubs.controller;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -27,6 +28,7 @@ import com.jfoenix.controls.JFXSnackbarLayout;
 
 import ajax.systems.company.hubs.dto.group.Group;
 import ajax.systems.company.hubs.dto.hub.HubCompanyBinding;
+import ajax.systems.company.hubs.dto.hub.HubCompanyBindingState;
 import ajax.systems.company.hubs.dto.hub.HubDetail;
 import ajax.systems.company.hubs.dto.hub.HubStateCmd;
 import ajax.systems.company.hubs.dto.object.ObjectBriefInfo;
@@ -39,6 +41,7 @@ import ajax.systems.company.hubs.service.IAjaxGroupService;
 import ajax.systems.company.hubs.service.IAjaxHubService;
 import ajax.systems.company.hubs.service.IAjaxObjectService;
 import ajax.systems.company.hubs.utils.Constants;
+import ajax.systems.company.hubs.utils.HubUtils;
 import ajax.systems.company.hubs.view.ViewName;
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
@@ -238,51 +241,54 @@ public class MainFrameController extends MainController implements Initializable
 		List<CompanyHub> result = new ArrayList<>();
 		if(hubs != null) {
 			for(HubCompanyBinding hubBinding : hubs) {
-				updateLoadingText(String.format("Recupero le informazioni per la centrale: %s", hubBinding.getHubId()));
-				CompanyHub companyHub = new CompanyHub();
-				companyHub.setHubId(hubBinding.getHubId());
-				ExecutorService hubDetailsRequestExecutor = Executors.newSingleThreadExecutor();
-				Callable<ResponseEntity<HubDetail>> callableHubDetailsRequest = () -> {
-					ResponseEntity<HubDetail> hubDetailResponse = hubService.getHubDetails(credentials, hubBinding.getHubId());
-					return hubDetailResponse;
-				};
-				ExecutorService hubObjectsRequestExecutor = Executors.newSingleThreadExecutor();
-				Callable<ResponseEntity<ObjectBriefInfo[]>> callableHubObjectsRequest = () -> {
-					ResponseEntity<ObjectBriefInfo[]> hubObjectResponse = objectService.getAvailableObjectsOfHub(credentials, hubBinding.getHubId());
-					return hubObjectResponse;
-				};
-				ExecutorService hubGroupsRequestExecutor = Executors.newSingleThreadExecutor();
-				Callable<ResponseEntity<Group[]>> callableHubGroupsRequest = () -> {
-					ResponseEntity<Group[]> groupResponse = groupService.listGroupsPerHub(credentials, hubBinding.getHubId());
-					return groupResponse;
-				};
-				Future<ResponseEntity<HubDetail>> hubDetailsResponseFuture = hubDetailsRequestExecutor.submit(callableHubDetailsRequest);
-				Future<ResponseEntity<ObjectBriefInfo[]>> hubObjectsResponseFuture = hubObjectsRequestExecutor.submit(callableHubObjectsRequest);
-				Future<ResponseEntity<Group[]>> hubGroupsResponseFuture = hubGroupsRequestExecutor.submit(callableHubGroupsRequest);
-				
-				try {
-					ResponseEntity<HubDetail> hubDetailsResponse = hubDetailsResponseFuture.get();
-					ResponseEntity<ObjectBriefInfo[]> hubObjectsResponse = hubObjectsResponseFuture.get();
-					ResponseEntity<Group[]> hubGroupsResponse = hubGroupsResponseFuture.get();
-					if(hubDetailsResponse != null) {
-						companyHub.setHubDetails(hubDetailsResponse.getBody());
+				if(hubBinding.getCompanyBindingState() != null && hubBinding.getCompanyBindingState() == HubCompanyBindingState.APPROVED &&
+						!hubBinding.getIsCompanyLocked()) {
+					updateLoadingText(String.format("Recupero le informazioni per la centrale: %s", hubBinding.getHubId()));
+					CompanyHub companyHub = new CompanyHub();
+					companyHub.setHubId(hubBinding.getHubId());
+					ExecutorService hubDetailsRequestExecutor = Executors.newSingleThreadExecutor();
+					Callable<ResponseEntity<HubDetail>> callableHubDetailsRequest = () -> {
+						ResponseEntity<HubDetail> hubDetailResponse = hubService.getHubDetails(credentials, hubBinding.getHubId());
+						return hubDetailResponse;
+					};
+					ExecutorService hubObjectsRequestExecutor = Executors.newSingleThreadExecutor();
+					Callable<ResponseEntity<ObjectBriefInfo[]>> callableHubObjectsRequest = () -> {
+						ResponseEntity<ObjectBriefInfo[]> hubObjectResponse = objectService.getAvailableObjectsOfHub(credentials, hubBinding.getHubId());
+						return hubObjectResponse;
+					};
+					ExecutorService hubGroupsRequestExecutor = Executors.newSingleThreadExecutor();
+					Callable<ResponseEntity<Group[]>> callableHubGroupsRequest = () -> {
+						ResponseEntity<Group[]> groupResponse = groupService.listGroupsPerHub(credentials, hubBinding.getHubId());
+						return groupResponse;
+					};
+					Future<ResponseEntity<HubDetail>> hubDetailsResponseFuture = hubDetailsRequestExecutor.submit(callableHubDetailsRequest);
+					Future<ResponseEntity<ObjectBriefInfo[]>> hubObjectsResponseFuture = hubObjectsRequestExecutor.submit(callableHubObjectsRequest);
+					Future<ResponseEntity<Group[]>> hubGroupsResponseFuture = hubGroupsRequestExecutor.submit(callableHubGroupsRequest);
+					
+					try {
+						ResponseEntity<HubDetail> hubDetailsResponse = hubDetailsResponseFuture.get();
+						ResponseEntity<ObjectBriefInfo[]> hubObjectsResponse = hubObjectsResponseFuture.get();
+						ResponseEntity<Group[]> hubGroupsResponse = hubGroupsResponseFuture.get();
+						if(hubDetailsResponse != null) {
+							companyHub.setHubDetails(hubDetailsResponse.getBody());
+						}
+						if(hubGroupsResponse != null) {
+							companyHub.setGroups(hubGroupsResponse.getBody());
+						}
+						if(hubObjectsResponse != null) {
+							companyHub.setObjectInfoes(hubObjectsResponse.getBody());
+						}
+					}catch(Exception ex) {
+						logger.warn("Error occured during parallel service call to Ajax Systems, {}",ex);
+						companyHub = null;
+						ex.printStackTrace();
 					}
-					if(hubGroupsResponse != null) {
-						companyHub.setGroups(hubGroupsResponse.getBody());
+					hubDetailsRequestExecutor.shutdown();
+					hubObjectsRequestExecutor.shutdown();
+					hubGroupsRequestExecutor.shutdown();
+					if(companyHub != null) {
+						result.add(companyHub);
 					}
-					if(hubObjectsResponse != null) {
-						companyHub.setObjectInfoes(hubObjectsResponse.getBody());
-					}
-				}catch(Exception ex) {
-					logger.warn("Error occured during parallel service call to Ajax Systems, {}",ex);
-					companyHub = null;
-					ex.printStackTrace();
-				}
-				hubDetailsRequestExecutor.shutdown();
-				hubObjectsRequestExecutor.shutdown();
-				hubGroupsRequestExecutor.shutdown();
-				if(companyHub != null) {
-					result.add(companyHub);
 				}
 			}
 		}

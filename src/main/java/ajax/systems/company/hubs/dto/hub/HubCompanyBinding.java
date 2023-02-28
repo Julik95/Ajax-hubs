@@ -17,4 +17,5 @@ public class HubCompanyBinding {
 
 	private String hubId;
 	private Boolean isCompanyLocked;
+	private HubCompanyBindingState companyBindingState;
 }

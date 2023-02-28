@@ -21,7 +21,14 @@ public enum Assets {
 	GROUPS_LIGHT_ORANGE_ICON("imgs/groups-light-orange.png"),
 	INFO_WHITE_ICON("imgs/info-white.png"),
 	CHECK_BLUE_ICON("imgs/check-blue.png"),
-	FEEDBACK_COLORED_ICON("imgs/feedback-colored.png");
+	FEEDBACK_COLORED_ICON("imgs/feedback-colored.png"),
+	PALETTE_WHITE_ICON("imgs/palette-white.png"),
+	DOT_GREY_ICON("imgs/dot-grey.png"),
+	DOT_GREEN_ICON("imgs/dot-green.png"),
+	DOT_ORANGE_ICON("imgs/dot-orange.png"),
+	DOT_RED_ICON("imgs/dot-red.png"),
+	DOT_VIOLET_ICON("imgs/dot-violet.png"),
+	LOGO_AJAX("ajax-icon.png");
 
 	String path;
 

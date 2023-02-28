@@ -10,10 +10,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXTextField;
 
 import ajax.systems.company.hubs.model.Credentials;
 import ajax.systems.company.hubs.utils.Constants;
+import ajax.systems.company.hubs.utils.HubUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -53,8 +55,24 @@ public class CredentialsController implements Initializable{
 	@FXML
 	private BorderPane rootContentPane;
 	
+	@FXML
+	private JFXCheckBox ricordamiOption;
+	
+	
+	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		Credentials credentials = HubUtils.getCredentialsFromCache();
+		if(credentials != null) {
+			if(StringUtils.hasText(credentials.getCompanyId()))
+				companyIdField.setText(credentials.getCompanyId());
+			if(StringUtils.hasText(credentials.getXApiKey()))
+				apiKeyField.setText(credentials.getXApiKey());
+			if(StringUtils.hasText(credentials.getXCompanyToken()))
+				companyTokenField.setText(credentials.getXCompanyToken());
+			loginButtom.setDisable(!isCredentialsValid());
+			ricordamiOption.setSelected(true);
+		}
 		companyIdField.textProperty().addListener((observable, oldValue, newValue) -> {
 			loginButtom.setDisable(!isCredentialsValid());
 		});
@@ -64,6 +82,7 @@ public class CredentialsController implements Initializable{
 		apiKeyField.textProperty().addListener((observable, oldValue, newValue) -> {
 			loginButtom.setDisable(!isCredentialsValid());
 		});
+		
 	}
 
 	
@@ -72,6 +91,11 @@ public class CredentialsController implements Initializable{
 		credentials.setCompanyId(companyIdField.getText().trim());
 		credentials.setXApiKey(apiKeyField.getText().trim());
 		credentials.setXCompanyToken(companyTokenField.getText().trim());
+		if(ricordamiOption.isSelected()) {
+			HubUtils.storeCredentialsToCache(credentials);
+		}else {
+			HubUtils.clearCredentialsCache();
+		}
 		mainController.onCredentialsFilledUp(credentials);
 	}
 	
