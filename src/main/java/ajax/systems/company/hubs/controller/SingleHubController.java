@@ -36,22 +36,13 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
-import javafx.scene.effect.BoxBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.CycleMethod;
-import javafx.scene.paint.RadialGradient;
-import javafx.scene.paint.Stop;
 
 
 @Component
@@ -205,6 +196,9 @@ public class SingleHubController implements Initializable{
 				companyHub.getHubDetails().getActiveChannels().isEmpty())) {
 			hubName.getStyleClass().add("opacity-045");
 			hubAlive = false;
+		}else {
+			hubName.getStyleClass().remove("opacity-045");
+			hubAlive = true;
 		}
 	}
 	
